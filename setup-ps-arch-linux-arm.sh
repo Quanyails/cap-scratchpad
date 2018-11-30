@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ssh alarm:192.168.1.193
+ssh alarm@192.168.1.193
 su # login as root, password: root
 
 # Package manager
