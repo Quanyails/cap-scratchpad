@@ -129,11 +129,12 @@ if __name__ == '__main__':
     args = sys.argv
     username = args[1]
     password = args[2]
+    url = args[3]
 
     try:
         check_matching_ips(username,
                            password,
-                           'https://www.smogon.com/forums/threads/cap-25-part-9-cap25f-movepool-poll-2.3643785/')
+                           url)
     except Exception as e:
         print e
         print e.message
