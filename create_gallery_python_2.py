@@ -130,7 +130,7 @@ def deduplicate_by_last_post(post_json):
 
 
 def sort_by_name(post_json):
-    return sorted(post_json, key=lambda post: post["name"])
+    return sorted(post_json, key=lambda post: post["name"].lower())
 
 
 def get_posts_json(base_url):
