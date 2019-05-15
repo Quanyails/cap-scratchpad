@@ -115,7 +115,10 @@ def jsonify_post(post):
 
 
 def filter_posts_without_images(posts_json):
-    return [post_json for post_json in posts_json if post_json["image"]]
+    return [post_json for post_json in posts_json
+            # if post_json["image"]
+            if post_json["image"] and post_json["status"] == "Final Submission"
+            ]
 
 
 def deduplicate_by_last_post(post_json):
@@ -150,7 +153,7 @@ topBuffer = 50
 def get_2d_index(i):
     x = i % maxCellsAcross
     # y = math.floor(i / maxCellsAcross)
-    y = int(math.floor(i / maxCellsAcross))   # Python 2 adapter
+    y = int(math.floor(i / maxCellsAcross))  # Python 2 adapter
     return x, y
 
 
