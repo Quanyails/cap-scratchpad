@@ -206,7 +206,7 @@ const MESSAGE_SELECTOR = '.message-body';
 
 const IMG_SELECTOR = '.bbImage';
 const IMG_DATA_ATTR = 'data-url';
-const LINK_SELECTOR = '.message-attribution-main';
+const LINK_SELECTOR = '.message-attribution-main a';
 
 class ArtThreadPost extends Post {
 	constructor(text) {
