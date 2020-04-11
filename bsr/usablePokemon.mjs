@@ -21,7 +21,6 @@ import * as _ from "./underscore.mjs";
  * @property {Stats} baseStats
  * @property {string} color
  * @property {string[]} eggGroups
- * @property {string} gender
  * @property {number} heightm
  * @property {string} name
  * @property {number} num
@@ -42,6 +41,7 @@ import * as _ from "./underscore.mjs";
  * @property {string[] | undefined} evos
  * @property {string | undefined} evoType
  * @property {number | undefined} gen
+ * @property {string | undefined} gender
  * @property {string | undefined} inheritsFrom
  * @property {string | undefined} isGigantamax
  * @property {string | undefined} isNonstandard
@@ -70,6 +70,23 @@ const fixPokedexData = (pokedex) => {
         ...pokedex.crucibellemega,
         isNonstandard: "Past",
         tier: "Illegal",
+    };
+
+    // Justyke is currently not implemented
+    fixedPokemon.justyke = {
+        num: -55,
+        name: "Justyke",
+        types: ["Steel", "Ground"],
+        gender: "N",
+        baseStats: {hp: 72, atk: 70, def: 56, spa: 83, spd: 68, spe: 30},
+        abilities: {"0": "Levitate", "1": "Bulletproof", H: "Justified"},
+        heightm: 0, // not defined?
+        weightkg: 0, // not defined?
+        color: "Brown",
+        eggGroups: ["Mineral"],
+        gen: 7,
+        tier: "CAP",
+        isNonstandard: "CAP",
     };
 
     return fixedPokemon;
@@ -127,6 +144,9 @@ const getUsablePokemon = (pokedex) => {
     return Object.values(deduplicatedPokedex).filter(pokemon => {
         if ([
             "Illegal",
+            // "LC",
+            // "LC Uber",
+            // "NFE",
             // "Uber",
             // "(Uber)",
             "Unreleased",
