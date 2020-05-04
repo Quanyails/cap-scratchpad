@@ -264,8 +264,8 @@ if __name__ == "__main__":
         print("Total Entries: " + str(len(posts_json)))
 
     except Exception as e:
-        print e
-        print e.message
+        print(e)
+        print(e.message)
         import traceback
 
         traceback.print_stack()
