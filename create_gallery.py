@@ -171,7 +171,7 @@ def create_collage(posts_json, image_filename="collage.png"):
     draw = ImageDraw.Draw(collage)
     font = ImageFont.truetype("arial.ttf", 16)
     # font = None  # Adapter
-    print("Collage Size: " + str(collage.width) + " / " + str(collage.height))
+    print("Collage Size: " + str(cWidth) + " / " + str(cHeight))
 
     # Paste Images in
     for i, post_json in enumerate(posts_json):
@@ -186,10 +186,11 @@ def create_collage(posts_json, image_filename="collage.png"):
 
         # Thumbnail and adjust offsets
         img.thumbnail((cellSize, cellSize))
-        xOff = math.floor(myX + ((cellSize - img.width) / 2))
-        yOff = math.floor(myY + ((cellSize - img.height) / 2))
-        # xOff = int(math.floor(myX + ((cellSize - img.width) / 2)))  # Python 2 adapter
-        # yOff = int(math.floor(myY + ((cellSize - img.height) / 2)))  # Python 2 adapter
+        (imgWidth, imgHeight) = img.size
+        xOff = math.floor(myX + ((cellSize - imgWidth) / 2))
+        yOff = math.floor(myY + ((cellSize - imgHeight) / 2))
+        # xOff = int(math.floor(myX + ((cellSize - imgWidth) / 2)))  # Python 2 adapter
+        # yOff = int(math.floor(myY + ((cellSize - imgHeight) / 2)))  # Python 2 adapter
 
         print("Pasting at " + str(xOff) + " / " + str(yOff))
 
