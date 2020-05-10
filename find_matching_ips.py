@@ -30,6 +30,14 @@ def check_matching_ips(username, password, url):
     driver = webdriver.Chrome() # requires brew tap homebrew/cask -> brew cask install chromedriver
     driver.maximize_window()
 
+    def hide_bottom_notification():
+        driver.execute_script(
+            """
+            Array.from(document.getElementsByClassName("u-bottomFixer"))
+                .forEach(el => el.style.display = "none");
+            """
+        )
+
     def login(username, password):
         driver.get('https://www.smogon.com/forums/login/')
         username_input = driver.find_element_by_name('login')
@@ -90,6 +98,7 @@ def check_matching_ips(username, password, url):
         ip_to_users_map = defaultdict(set)
 
         driver.get(url)
+        hide_bottom_notification()
 
         # A `while` loop is the cleanest for scanning over a page and finding the 'next' button.
         while True:
