@@ -33,7 +33,7 @@ def check_matching_ips(username, password, url):
     def hide_bottom_notification():
         driver.execute_script(
             """
-            Array.from(document.getElementsByClassName("u-bottomFixer"))
+            Array.from(document.querySelectorAll('[data-type="bottom_fixer"]'))
                 .forEach(el => el.style.display = "none");
             """
         )
@@ -98,10 +98,11 @@ def check_matching_ips(username, password, url):
         ip_to_users_map = defaultdict(set)
 
         driver.get(url)
-        hide_bottom_notification()
 
         # A `while` loop is the cleanest for scanning over a page and finding the 'next' button.
         while True:
+            hide_bottom_notification()
+
             WebDriverWait(driver, 10).until(visibility_of_element_located((By.CSS_SELECTOR, '.block--messages')))
             message_container = driver.find_element(By.CSS_SELECTOR, '.block--messages')
             ip_to_user_map_section = get_ips_in_container_element(message_container)
