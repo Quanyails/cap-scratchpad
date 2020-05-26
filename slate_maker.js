@@ -333,22 +333,27 @@ class NameThreadPost extends Post {
 		// No more than two capital letters can be included in the name, 
 		// and capital letters cannot be consecutive.
 		const capitals = str.match(/[A-Z]/g);
-		switch(capitals.length) {
-		case 1:
-			if (!str.startsWith(capitals[0])) {
-				return false;
+		if (capitals) {
+			switch (capitals.length) {
+				case 1:
+					if (!str.startsWith(capitals[0])) {
+						return false;
+					}
+					break;
+				case 2:
+					if (!str.startsWith(capitals[0])) {
+						return false;
+					}
+					let rest = str.substring(1);
+					if (rest.startsWith(capitals[0])) {
+						return false;
+					}
+					break;
+				default:
+					return false;
 			}
-			break;
-		case 2:
-			if (!str.startsWith(capitals[0])) {
-				return false;
-			}
-			let rest = str.substring(1);
-			if (rest.startsWith(capitals[0])) {
-				return false;
-			}
-			break;
-		default:
+		}
+		else {
 			return false;
 		}
 
