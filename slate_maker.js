@@ -127,6 +127,29 @@ const isValidNameSubmission = ({
 	return true;
 }
 
+const isValidPokedexSubmission = ({
+	category, /** @type: string */
+	gamesAndEntries, /** @type: [string, string] */
+	username, /** @type: string */
+}) => {
+	// TODO: add rule about length of Pokemon category.
+
+	for (const [game, entry] of gamesAndEntries) {
+		if (entry.split(" ").length > 32) {
+			window.console.warn(`${username} has an illegal Pokedex entry!`);
+			window.console.warn(`"${entry}" is longer than ${32} words long.`);
+			return false;
+		}
+		if (entry.length > 156) {
+			window.console.warn(`${username} has an illegal Pokedex entry!`);
+			window.console.warn(`"${entry}" is longer than ${156} characters.`);
+			return false;
+		}
+	}
+	return true;
+}
+
+
 const makeBasePost = ($post) => {
 	const id = (() => {
 		if ($post.is(MESSAGE_DELETED_SELECTOR)) {
@@ -260,6 +283,96 @@ const makeNameThreadPost = (el) => {
 	};
 };
 
+/**
+ *
+ * @param {HTMLElement} el
+ * @returns {Post}
+ */
+const makePokedexThreadPost = (el) => {
+	const $post = window.$(el);
+
+	const {
+		id,
+		messageLines,
+		postUrl,
+		username,
+	} = makeBasePost($post);
+
+	// Doesn't have enough fields
+	if (messageLines.length < 7) {
+		return undefined;
+	}
+
+	const finalSubmissionText = messageLines[0];
+	const nameAndCategoryLine = messageLines[2];
+	const gameAndEntryLines = [
+		messageLines[4],
+		messageLines[6],
+	];
+
+	const isFinalSubmission = finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
+
+	if (!isFinalSubmission) {
+		return undefined;
+	}
+
+	const nameAndCategoryMatch = nameAndCategoryLine
+		.match(/(.*), the (.*) (Pokemon|Pokémon)/);
+
+	if (nameAndCategoryMatch === null || nameAndCategoryMatch.length !== 4) {
+		window.console.warn(`${username} didn't fill in the Pokemon name and entry correctly!`);
+		window.console.warn(nameAndCategoryLine);
+		return undefined;
+	}
+	const [
+		completeMatch,
+		name,
+		category,
+		_,
+	] = nameAndCategoryMatch;
+
+	const gamesAndEntries = [];
+	for (const gameAndEntryLine of gameAndEntryLines) {
+		const gameAndEntryMatch = gameAndEntryLine.match(/(.*): (.*)/);
+		if (gameAndEntryMatch === null || gameAndEntryMatch.length !== 3) {
+			window.console.warn(`${username} didn't fill in the Pokedex entry correctly!`);
+			window.console.warn(gameAndEntryLine);
+			return undefined;
+		}
+		const [
+			completeMatch,
+			game,
+			entry,
+		] = gameAndEntryMatch;
+		gamesAndEntries.push([game, entry]);
+	}
+
+	return {
+		...{
+			id,
+			postUrl,
+			username,
+		},
+		bbCode: [
+			`${username}`,
+			`[QUOTE="${username}, post: ${id}"]`,
+			"",
+			`[B]${name}[/B], the [B]${category}[/B] Pokémon`,
+			"",
+			`[B]${gamesAndEntries[0][0]}[/B]: ${gamesAndEntries[0][1]}`,
+			"",
+			`[B]${gamesAndEntries[1][0]}[/B]: ${gamesAndEntries[1][1]}`,
+			"[/QUOTE]",
+			"",
+		].join("\n"),
+		isValidSubmission: isValidPokedexSubmission({
+			category,
+			gamesAndEntries,
+			username,
+		}),
+	};
+}
+
 // Scraper base class
 
 // Different from Vote4CAP's scraper!
@@ -294,6 +407,9 @@ const xenForoScraper = ({
 			}
 			case "name": {
 				return makeNameThreadPost(el);
+			}
+			case "pokedex": {
+				return makePokedexThreadPost(el);
 			}
 			default: {
 				throw Error(`Unsupported poll scraper type: ${type}`);
@@ -378,8 +494,9 @@ const makeBbCode = (posts) => {
 const main = async () => {
 	const posts = await xenForoScraper({
 		url: window.location.href,
-		type: "art",
+		// type: "art",
 		// type: "name",
+		type: "pokedex",
 	});
 
 	const bbCode = makeBbCode(posts);
