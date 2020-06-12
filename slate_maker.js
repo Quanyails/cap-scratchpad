@@ -16,7 +16,6 @@ if (typeof window.$ !== 'function') {
  * @interface Post
  * @property {string} bbCode the BBCode to be posted in the opening post of the poll
  * @property {number} id the ID of the post
- * @property {boolean} isFinalSubmission if the post is a final submission post
  * @property {boolean} isValidSubmission if the post is a valid submission
  * @property {string} postUrl the URL to the post
  * @property {string} username the name of the user who made the post
@@ -35,9 +34,6 @@ const IMG_DATA_ATTR = 'data-url';
 const POST_ID_DATA_ATTR = 'data-lb-id';
 
 const FINAL_SUBMISSION_TEXT = 'final submission';
-
-const MAX_DESCRIPTION_LENGTH = 25;
-const PRONUNCIATION_TEXT = 'Pronounced: ';
 
 const isNameLegal = (str) => {
 	// Names cannot be longer than 12 letters.
@@ -92,7 +88,6 @@ const isNameLegal = (str) => {
 	return true;
 }
 
-
 const isValidNameSubmission = ({
 								   description,
 								   name,
@@ -111,7 +106,7 @@ const isValidNameSubmission = ({
 	// TODO: Use a library to count words.
 	// Try: https://github.com/RadLikeWhoa/Countable
 	const descriptionWords = description.split(' ');
-	const isDescribedCorrectly = descriptionWords.length <= MAX_DESCRIPTION_LENGTH;
+	const isDescribedCorrectly = descriptionWords.length <= 25;
 	if (!isDescribedCorrectly) {
 		window.console.warn(`${username} has an illegal description!`);
 		window.console.warn(`"${description}" has length ${descriptionWords.length}, which is longer than the maximum description length of ${MAX_DESCRIPTION_LENGTH}.`);
@@ -120,6 +115,7 @@ const isValidNameSubmission = ({
 	}
 
 	// Is the "pronounced" line correct?
+	const PRONUNCIATION_TEXT = 'Pronounced: ';
 	const isPronouncedCorrectly = pronunciation.startsWith(PRONUNCIATION_TEXT);
 	if (!isPronouncedCorrectly) {
 		window.console.warn(`${username} has an illegal pronunciation!`);
@@ -173,17 +169,7 @@ const makeArtThreadPost = (el) => {
 	const isFinalSubmission = finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
 
 	if (!isFinalSubmission) {
-		return {
-			...{
-				id,
-				messageLines,
-				postUrl,
-				username,
-			},
-			bbCode: '',
-			isFinalSubmission,
-			isValidSubmission: false,
-		}
+		return undefined;
 	}
 
 	const imgUrls = Array.from($post.find(IMG_SELECTOR))
@@ -220,7 +206,6 @@ const makeArtThreadPost = (el) => {
 			username,
 		},
 		bbCode,
-		isFinalSubmission,
 		isValidSubmission: mainImageUrl !== null,
 	}
 };
@@ -242,17 +227,7 @@ const makeNameThreadPost = (el) => {
 
 	// Doesn't have enough fields
 	if (messageLines.length < 7) {
-		return {
-			...{
-				id,
-				postUrl,
-				username,
-			},
-			bbCode: '',
-			name: '',
-			isFinalSubmission: false,
-			isValidSubmission: false,
-		}
+		return undefined;
 	}
 
 	const finalSubmissionText = messageLines[0];
@@ -263,17 +238,7 @@ const makeNameThreadPost = (el) => {
 	const isFinalSubmission = finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
 
 	if (!isFinalSubmission) {
-		return {
-			...{
-				id,
-				postUrl,
-				username,
-			},
-			bbCode: '',
-			name: '',
-			isFinalSubmission,
-			isValidSubmission: false,
-		}
+		return undefined;
 	}
 
 	const bbCode = `[B]${name}[/B] [URL=${postUrl}]>>>[/URL]`;
@@ -285,7 +250,6 @@ const makeNameThreadPost = (el) => {
 			username,
 		},
 		bbCode,
-		isFinalSubmission,
 		isValidSubmission: isValidNameSubmission({
 			description,
 			name,
@@ -355,9 +319,6 @@ const xenForoScraper = ({
 	 */
 	const validatePosts = (posts) => {
 		switch (type) {
-			case "art": {
-				return posts;
-			}
 			case "name": {
 				// TODO check that posts are after moderator post.
 				return posts;
@@ -405,7 +366,7 @@ const makeBbCode = (posts) => {
 	return posts
 		// get valid final submission posts
 		.filter((post) => {
-			return post.isFinalSubmission && post.isValidSubmission;
+			return post !== undefined && post.isValidSubmission;
 		})
 		// map to BBCode
 		.map((post) => {
