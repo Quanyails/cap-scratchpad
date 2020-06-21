@@ -203,10 +203,10 @@ const makeArtThreadPost = (el) => {
 	if (mainImageUrl === null) {
 		window.console.warn(`${username} declared a final submission without an image.`);
 	}
-	const supportingMaterial = $post.find(MESSAGE_SELECTOR).find('a[href]');
+	const hasSupportingMaterial = messageLines.some(line => line.toLowerCase() === "supporting material");
 
 	const bbCode = ((
-		mainImageUrl && supportingMaterial.length > 0 ?
+		mainImageUrl && hasSupportingMaterial ?
 			[
 				'--------------------------------------------------------------------------------------------',
 				`[B]${username}[/B]`,
@@ -494,9 +494,9 @@ const makeBbCode = (posts) => {
 const main = async () => {
 	const posts = await xenForoScraper({
 		url: window.location.href,
-		// type: "art",
+		type: "art",
 		// type: "name",
-		type: "pokedex",
+		// type: "pokedex",
 	});
 
 	const bbCode = makeBbCode(posts);
