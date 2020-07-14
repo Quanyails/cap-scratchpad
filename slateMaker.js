@@ -102,11 +102,12 @@ const isValidNameSubmission = ({
 		return false;
 	}
 
-	// Is descrption no longer than 25 words?
+	// Is description no longer than 25 words?
 	// TODO: Use a library to count words.
 	// Try: https://github.com/RadLikeWhoa/Countable
+	const MAX_DESCRIPTION_LENGTH = 25;
 	const descriptionWords = description.split(' ');
-	const isDescribedCorrectly = descriptionWords.length <= 25;
+	const isDescribedCorrectly = descriptionWords.length <= MAX_DESCRIPTION_LENGTH;
 	if (!isDescribedCorrectly) {
 		window.console.warn(`${username} has an illegal description!`);
 		window.console.warn(`"${description}" has length ${descriptionWords.length}, which is longer than the maximum description length of ${MAX_DESCRIPTION_LENGTH}.`);
