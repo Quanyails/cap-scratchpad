@@ -133,7 +133,11 @@ const isValidPokedexSubmission = ({
 	gamesAndEntries, /** @type: [string, string] */
 	username, /** @type: string */
 }) => {
-	// TODO: add rule about length of Pokemon category.
+	if (category.length > 13) {
+		window.console.warn(`${username} has an illegal Pokedex category!`);
+		window.console.warn(`"${category}" is longer than ${13} characters.`);
+		return false;
+	}
 
 	for (const [game, entry] of gamesAndEntries) {
 		if (entry.split(" ").length > 32) {
