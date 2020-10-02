@@ -167,7 +167,10 @@ const makeBasePost = ($post) => {
 	})();
 
 	const message = $post.find(MESSAGE_SELECTOR).text().trim();
-	const messageLines = message.split('\n').map((s) => s.trim());
+	const messageLines = message.split('\n')
+		.map((s) => s
+			.trim()
+			.replaceAll('\u200b', ''));
 
 	return {
 		id,
