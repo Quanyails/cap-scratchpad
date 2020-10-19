@@ -184,7 +184,7 @@ const makeBasePost = ($post) => {
  */
 const makeArtThreadPost = (el) => {
 	const IMG_SELECTOR = '.bbImage';
-	const IMG_DATA_ATTR = 'data-url';
+	const IMG_SRC = 'src';
 
 	const $post = window.$(el);
 
@@ -204,7 +204,8 @@ const makeArtThreadPost = (el) => {
 
 	const imgUrls = Array.from($post.find(IMG_SELECTOR))
 		.map((img) => {
-			return window.$(img).attr(IMG_DATA_ATTR);
+			const src = window.$(img).attr(IMG_SRC);
+			return new URL(src, window.location.href).href;
 		});
 	const mainImageUrl = (imgUrls.length > 0) ? imgUrls[0] : null;
 	if (mainImageUrl === null) {
