@@ -21,18 +21,6 @@ if (typeof window.$ !== 'function') {
  * @property {string} username the name of the user who made the post
  */
 
-// Post base class
-
-const IMG_SELECTOR = '.bbImage';
-const LINK_SELECTOR = '.message-attribution-main a';
-const MESSAGE_SELECTOR = '.message-body';
-const MESSAGE_DELETED_SELECTOR = '.message--deleted';
-const POST_ID_SELECTOR = '.message-userContent';
-const USERNAME_SELECTOR = '.message-name';
-
-const IMG_DATA_ATTR = 'data-url';
-const POST_ID_DATA_ATTR = 'data-lb-id';
-
 const FINAL_SUBMISSION_TEXT = 'final submission';
 
 const isNameLegal = (str) => {
@@ -155,7 +143,15 @@ const isValidPokedexSubmission = ({
 }
 
 
+// Post base class
 const makeBasePost = ($post) => {
+	const LINK_SELECTOR = '.message-attribution-main a';
+	const MESSAGE_SELECTOR = '.message-body';
+	const MESSAGE_DELETED_SELECTOR = '.message--deleted';
+	const POST_ID_DATA_ATTR = 'data-lb-id';
+	const POST_ID_SELECTOR = '.message-userContent';
+	const USERNAME_SELECTOR = '.message-name';
+
 	const id = (() => {
 		if ($post.is(MESSAGE_DELETED_SELECTOR)) {
 			return null;
@@ -187,6 +183,9 @@ const makeBasePost = ($post) => {
  * @returns {Post}
  */
 const makeArtThreadPost = (el) => {
+	const IMG_SELECTOR = '.bbImage';
+	const IMG_DATA_ATTR = 'data-url';
+
 	const $post = window.$(el);
 
 	const {
