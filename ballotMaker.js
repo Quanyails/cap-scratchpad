@@ -1,13 +1,13 @@
 (() => {
-    const names = ``.split("\n");
-
     const ballots = Array.from($(".message-body"))
         .map(el => {
-            const lines = el.innerText.trim().split("\n");
-            return lines
-                .map(line => line.trim())
-                .filter(line => names.includes(line))
-                ;
+            // The part of the post that contains the ballot options is
+            // the part of the post up to the first two newlines in that post,
+            // or the full post if the user has no comments after the ballot.
+            const text = el.innerText.trim();
+            const ballotText = text.match(/(.*)\n\n/);
+            const ballot = (ballotText ? ballotText[1] : text).split("\n");
+            return ballot.map(line => line.trim());
         })
         // Remove OP
         .slice(1);
