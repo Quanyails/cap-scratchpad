@@ -169,7 +169,7 @@ def create_collage(posts_json, image_filename="collage.png"):
     cHeight = (rows * cellSize) + (rows * topBuffer)
     collage = Image.new("RGB", (cWidth, cHeight), (255, 255, 255))
     draw = ImageDraw.Draw(collage)
-    font = ImageFont.truetype("arial.ttf", 16)
+    font = ImageFont.truetype("Arial.ttf", 16)
     # font = None  # Adapter
     print("Collage Size: " + str(cWidth) + " / " + str(cHeight))
 
