@@ -9,7 +9,7 @@ TIMEOUT = 60 * 60  # seconds
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import presence_of_element_located, element_to_be_clickable, \
-    staleness_of, visibility_of, visibility_of_element_located, visibility_of_any_elements_located, \
+    staleness_of, visibility_of, visibility_of_element_located, \
     invisibility_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -27,7 +27,9 @@ def check_matching_ips(username, password, url):
     # Safari's webdriver is the easiest to set up, but you can change this line.
     # Safari webdriver is broken?
     # driver = webdriver.Safari()
-    driver = webdriver.Chrome() # requires brew tap homebrew/cask -> brew cask install chromedriver
+    driver = webdriver.Chrome(
+        executable_path="node_modules/.bin/chromedriver"
+    )
     driver.maximize_window()
 
     def hide_bottom_notification():
