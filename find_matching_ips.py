@@ -61,7 +61,7 @@ def check_matching_ips(username, password, url):
             # See: https://stackoverflow.com/questions/20888592/
             # name = name_field.text
             name = name_field.get_attribute('textContent')
-            print name
+            print(name)
             try:
                 ip_button = message.find_element(By.CSS_SELECTOR, '.actionBar-action--ip')
                 time.sleep(0.5)  # I don't know why this is needed. :|
@@ -107,7 +107,7 @@ def check_matching_ips(username, password, url):
             message_container = driver.find_element(By.CSS_SELECTOR, '.block--messages')
             ip_to_user_map_section = get_ips_in_container_element(message_container)
 
-            for (key, values) in ip_to_user_map_section.iteritems():
+            for (key, values) in ip_to_user_map_section.items():
                 ip_to_users_map[key].update(values)
 
             try:
@@ -126,11 +126,11 @@ def check_matching_ips(username, password, url):
     login(username, password)
     ip_to_user_map = get_ips_on_page(url)
 
-    for (key, values) in ip_to_user_map.iteritems():
-        print 'IP address', key, 'username(s)', values
-    for (key, values) in ip_to_user_map.iteritems():
+    for (key, values) in ip_to_user_map.items():
+        print('IP address', key, 'username(s)', values)
+    for (key, values) in ip_to_user_map.items():
         if len(values) > 1:
-            print 'MULTIPLE USERS', values
+            print('MULTIPLE USERS', values)
 
     driver.quit()
 
@@ -146,7 +146,7 @@ if __name__ == '__main__':
                            password,
                            url)
     except Exception as e:
-        print e
-        print e.message
+        print(e)
+        print(e.message)
         import traceback
         traceback.print_stack()
