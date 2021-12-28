@@ -131,6 +131,41 @@
      * @returns {Post}
      * @constructor
      */
+    const MovepoolThreadPost = (el) => {
+        // Movepools have a lot of rules, so it's hard to automate validation.
+        // Review movepools manually for now.
+        // TODO: Implement
+        const isValidMovepoolSubmission = () => true;
+
+        const { id, messageLines, postUrl, username } = BasePost(el);
+
+        const finalSubmissionText = messageLines[0];
+        const isFinalSubmission =
+            finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
+
+        if (!isFinalSubmission) {
+            return undefined;
+        }
+
+        const bbCode = `[URL=${postUrl}]${username}[/URL]`;
+
+        return {
+            ...{
+                id,
+                postUrl,
+                username,
+            },
+            bbCode,
+            isValidSubmission: isValidMovepoolSubmission(),
+        };
+    };
+
+    /**
+     *
+     * @param {HTMLElement} el
+     * @returns {Post}
+     * @constructor
+     */
     const NameThreadPost = (el) => {
         const isNameLegal = (str) => {
             // Names cannot be longer than 12 letters.
@@ -401,6 +436,9 @@
                 case "art": {
                     return ArtThreadPost(el);
                 }
+                case "movepool": {
+                    return MovepoolThreadPost(el);
+                }
                 case "name": {
                     return NameThreadPost(el);
                 }
@@ -493,6 +531,7 @@
         const posts = await xenForoScraper({
             url: window.location.href,
             type: "art",
+            // type: "movepool",
             // type: "name",
             // type: "pokedex",
         });
