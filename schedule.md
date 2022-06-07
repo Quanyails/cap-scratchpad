@@ -63,7 +63,7 @@ Pre-Evo Discussion: prevo_thread, after art_poll, 1d
 Pre-Evo Poll: prevo_poll, after prevo_thread, 1d
 
 section Names
-Name Submissions: name_thread, after prevo_poll, 14d
+Name Submissions: name_thread, after art_poll, 14d
 Name Polls: name_poll, after name_thread, 3d
 
 V1: milestone, v1_milestone, after movesets_poll name_poll sprite_poll, 1s
