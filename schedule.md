@@ -50,8 +50,8 @@ Movesets Poll(s): movesets_poll, after movesets_thread, 2d
 %% Flavor
 
 section Art
-Art Submissions: art_thread, after typing_poll, 52d
-Art Submissions Grace Period: art_gap, after ability2_poll, 2d
+Art Submissions: art_thread, after typing_poll, 43d
+Art Submissions Grace Period: art_gap, after art_thread counters_thread, 2d
 Art Polls: art_poll, after art_gap, 5d
 
 section Sprites
