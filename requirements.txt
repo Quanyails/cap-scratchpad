@@ -10,6 +10,10 @@ certifi==2022.12.7
     # via requests
 charset-normalizer==2.1.1
     # via requests
+click==8.1.3
+    # via cap-gallery-tools (pyproject.toml)
+colorama==0.4.6
+    # via click
 idna==3.4
     # via requests
 pillow==9.3.0
