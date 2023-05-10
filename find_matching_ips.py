@@ -7,6 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 TIMEOUT = 60 * 60  # seconds
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import presence_of_element_located, element_to_be_clickable, \
     staleness_of, visibility_of, visibility_of_element_located, \
@@ -27,9 +28,10 @@ def check_matching_ips(username, password, url):
     # Safari's webdriver is the easiest to set up, but you can change this line.
     # Safari webdriver is broken?
     # driver = webdriver.Safari()
-    driver = webdriver.Chrome(
-        executable_path="node_modules/.bin/chromedriver"
+    service = Service(
+        executable_path=r"node_modules\.bin\chromedriver.cmd"
     )
+    driver = webdriver.Chrome(service=service)
     driver.maximize_window()
 
     def hide_bottom_notification():
@@ -42,15 +44,14 @@ def check_matching_ips(username, password, url):
 
     def login(username, password):
         driver.get('https://www.smogon.com/forums/login/')
-        username_input = driver.find_element_by_name('login')
+        username_input = driver.find_element(By.NAME, 'login')
         username_input.send_keys(username)
-        password_input = driver.find_element_by_name('password')
+        password_input = driver.find_element(By.NAME, 'password')
         password_input.send_keys(password)
         # Not sure why form.submit doesn't work...
         WebDriverWait(driver, TIMEOUT).until(element_to_be_clickable((By.CSS_SELECTOR, '.button--icon--login')))
-        driver.find_element_by_css_selector('.button--icon--login').click()
+        driver.find_element(By.CSS_SELECTOR, '.button--icon--login').click()
         WebDriverWait(driver, TIMEOUT).until(presence_of_element_located((By.CSS_SELECTOR, '.p-navgroup-link--user')))
-
 
     def get_ips_in_container_element(element):
         ip_to_users_map = defaultdict(set)
@@ -78,7 +79,8 @@ def check_matching_ips(username, password, url):
             # as it detects the last, hidden locator.
 
             # WebDriverWait(driver, TIMEOUT).until(visibility_of_any_elements_located((By.CSS_SELECTOR, '.is-active')))
-            WebDriverWait(driver, TIMEOUT).until(visibility_of_element_located((By.CSS_SELECTOR, '.overlay-container.is-active')))
+            WebDriverWait(driver, TIMEOUT).until(
+                visibility_of_element_located((By.CSS_SELECTOR, '.overlay-container.is-active')))
             overlay = driver.find_element(By.CSS_SELECTOR, '.overlay-container.is-active')
             WebDriverWait(driver, TIMEOUT).until(visibility_of(overlay))
             assert overlay.is_displayed()
@@ -88,7 +90,7 @@ def check_matching_ips(username, password, url):
                 ip_to_users_map[ip].add(name)
 
             # WebDriverWait(driver, TIMEOUT).until(visibility_of_element_located((By.CSS_SELECTOR, '.overlay-titleCloser')))
-            close_button = overlay.find_element_by_css_selector('.overlay-titleCloser')
+            close_button = overlay.find_element(By.CSS_SELECTOR, '.overlay-titleCloser')
             close_button.click()
             WebDriverWait(driver, TIMEOUT).until(invisibility_of_element_located((By.ID, overlay.id)))
 
@@ -113,7 +115,7 @@ def check_matching_ips(username, password, url):
                 ip_to_users_map[key].update(values)
 
             try:
-                body = driver.find_element_by_tag_name('body')
+                body = driver.find_element(By.TAG_NAME, 'body')
                 next_button = body.find_element(By.CSS_SELECTOR, '.pageNav-jump--next')
                 # next_button.click() fails for some reason...
                 next_url = next_button.get_property('href')
@@ -149,6 +151,5 @@ if __name__ == '__main__':
                            url)
     except Exception as e:
         print(e)
-        print(e.message)
         import traceback
         traceback.print_stack()
