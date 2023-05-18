@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "jsx": "react",
+    "lib": ["DOM", "ES2021.String"],
+    "noImplicitAny": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "rootDir": "./src/",
+    "outDir": "./dist/",
+    "strict": true,
+    "target": "es6"
+  },
+  "include": [
+    "./src/"
+  ]
+}
