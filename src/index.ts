@@ -34,10 +34,3 @@ const makeSlate = async (url: string, type: SubmissionType) => {
 window.Breezi = {
   makeSlate,
 };
-
-const main = async () => {
-  const slate = await makeSlate(location.href, "pokedex");
-  console.log(slate);
-};
-
-main();
