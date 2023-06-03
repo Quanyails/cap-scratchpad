@@ -61,6 +61,11 @@ const getSubmission = (
     issues.push(`${nameAndCategoryLine} is not formatted correctly!`);
   }
 
+  const [, name, category] = nameAndCategoryMatch[0];
+  if (!isCategoryLegal(category)) {
+    issues.push(`${category} is not legal!`);
+  }
+
   const entries: { content: string; game: string }[] = [];
   for (const entryLine of [entryLine1, entryLine2]) {
     const entryMatch = Array.from(entryLine.matchAll(/(.*): (.*)/g));
@@ -68,10 +73,15 @@ const getSubmission = (
       issues.push(`${entryLine} is not formatted correctly!`);
     } else {
       const [, game, content] = entryMatch[0];
-      entries.push({
-        content: content,
-        game: game,
-      });
+
+      if (!isEntryLegal(content)) {
+        issues.push(`${content} is not legal!`);
+      } else {
+        entries.push({
+          content: content,
+          game: game,
+        });
+      }
     }
   }
 
@@ -80,8 +90,6 @@ const getSubmission = (
     issues.forEach((s) => console.warn(s));
     return null;
   }
-
-  const [, name, category] = nameAndCategoryMatch[0];
 
   return {
     category,
