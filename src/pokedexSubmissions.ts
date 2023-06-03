@@ -29,10 +29,6 @@ const getSubmission = (
   el: HTMLElement,
   { textLines, username }: Post
 ): PokedexSubmission | null => {
-  // Doesn't have enough fields
-  if (textLines.length < 7) {
-    return null;
-  }
   const [
     finalSubmissionText,
     ,
@@ -46,6 +42,18 @@ const getSubmission = (
   const isFinalSubmission =
     finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
   if (!isFinalSubmission) {
+    return null;
+  }
+
+  // Doesn't have enough fields
+  if (
+    [finalSubmissionText, nameAndCategoryLine, entryLine1, entryLine2].some(
+      (s) => s === undefined
+    )
+  ) {
+    console.warn(`${username} has an illegal submission!`);
+    console.warn("The following submission doesn't have all required lines:");
+    console.warn(textLines.join("\n"));
     return null;
   }
 
