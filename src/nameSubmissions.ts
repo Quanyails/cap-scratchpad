@@ -31,22 +31,25 @@ const isNameLegal = (str: string): boolean => {
   const capitals = str.match(/[A-Z]/g);
   if (capitals) {
     switch (capitals.length) {
-      case 1:
+      case 1: {
         if (!str.startsWith(capitals[0])) {
           return false;
         }
         break;
-      case 2:
+      }
+      case 2: {
         if (!str.startsWith(capitals[0])) {
           return false;
         }
-        let rest = str.substring(1);
+        const rest = str.substring(1);
         if (rest.startsWith(capitals[0])) {
           return false;
         }
         break;
-      default:
+      }
+      default: {
         return false;
+      }
     }
   } else {
     return false;

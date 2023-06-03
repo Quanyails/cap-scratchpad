@@ -13,7 +13,13 @@
     "webpack-cli": "^5.1.1"
   },
   "scripts": {
-    "breezi": "npx prettier --write src && npx webpack",
-    "test": "npx prettier --write src && npx jest"
+    "breezi": "npx webpack",
+    "lint": "npx prettier --write src && npx eslint --fix src",
+    "test": "npx jest"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "eslint": "^8.42.0"
   }
 }

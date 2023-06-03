@@ -16,6 +16,7 @@ declare global {
 }
 
 const makeSlate = async (url: string, type: SubmissionType) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formatter: SubmissionHandler<any> = {
     art: artSubmissionsHandler,
     name: nameSubmissionsHandler,
