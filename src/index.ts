@@ -3,6 +3,7 @@ import { nameSubmissionsHandler } from "./nameSubmissions";
 import { pokedexSubmissionsHandler } from "./pokedexSubmissions";
 import { fetchThread } from "./threads";
 import { SubmissionHandler } from "./submissions";
+import { twoStageStatsSubmissionsHandler } from "./twoStageStatSubmissions";
 
 type SubmissionType = "art" | "name" | "pokedex";
 
@@ -19,6 +20,7 @@ const makeSlate = async (url: string, type: SubmissionType) => {
     art: artSubmissionsHandler,
     name: nameSubmissionsHandler,
     pokedex: pokedexSubmissionsHandler,
+    twoStageStats: twoStageStatsSubmissionsHandler,
   }[type];
 
   const data = await fetchThread(url);
