@@ -19,6 +19,19 @@ const POST_ID_DATA_ATTR = "data-lb-id";
 const POST_ID_SELECTOR = ".message-userContent";
 const USERNAME_SELECTOR = ".message-name";
 
+export const buildTestPost = (message: string): Post => {
+  return {
+    id: -1,
+    textContent: message.trim(),
+    textLines: message
+      .trim()
+      .split("\n")
+      .map((s) => s.trim()),
+    url: "http://example.com",
+    username: "username",
+  };
+};
+
 export const parsePost = (el: HTMLElement): Post | null => {
   if (el.matches(MESSAGE_DELETED_SELECTOR)) {
     return null;
