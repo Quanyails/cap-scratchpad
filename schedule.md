@@ -80,7 +80,7 @@ Flavor Ability Discussion: ability3_thread, after movepool_poll, 5d
 Flavor Ability Poll(s): ability3_poll, after ability3_thread, 2d
 
 section Pokedex
-Pokedex Submissions: pokedex_thread, after ability3_poll, 14d
+Pokedex Submissions: pokedex_thread, after v1_milestone, 7d
 Pokedex Poll(s): pokedex_poll, after pokedex_thread, 3d
 
 section Playtest
