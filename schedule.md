@@ -58,6 +58,10 @@ section Sprites
 Sprite Submissions: sprite_thread, after art_poll, 21d
 Sprite Poll(s): sprite_poll, after sprite_thread, 2d
 
+section Shiny Palette
+Shiny Palette Submissions: shiny_palette_thread, after sprite_poll, 3d
+Shiny Palette Poll(s): shiny_palette_poll, after shiny_palette_thread, 3d
+
 section Pre-Evos
 Pre-Evo Discussion: prevo_thread, after art_poll, 1d
 Pre-Evo Poll: prevo_poll, after prevo_thread, 1d
@@ -66,7 +70,7 @@ section Names
 Name Submissions: name_thread, after art_poll, 14d
 Name Polls: name_poll, after name_thread, 3d
 
-V1: milestone, v1_milestone, after movesets_poll name_poll sprite_poll, 1s
+V1: milestone, v1_milestone, after movesets_poll name_poll shiny_palette_poll sprite_poll, 1s
 
 
 %% Post-Flavor
