@@ -1,4 +1,4 @@
-import { parsePost, Post } from "./posts";
+import { parseElement, Post } from "./posts";
 
 interface Datum {
   el: HTMLElement;
@@ -33,7 +33,7 @@ const fetchPage = async (url: string): Promise<Page> => {
 
   const data = Array.from(el.querySelectorAll(POST_SELECTOR)).flatMap((el) => {
     const castEl = el as HTMLElement;
-    const post = parsePost(castEl);
+    const post = parseElement(castEl);
 
     return post ? [{ el: castEl, post }] : [];
   });
