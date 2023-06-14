@@ -2,8 +2,8 @@ import { Post } from "./posts";
 import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "./submissions";
 
 const MAX_CATEGORY_LENGTH = 13;
-const MAX_CHARACTER_COUNT = 156;
-const MAX_WORD_COUNT = 32;
+const MAX_CHARACTER_COUNT = 153;
+const MAX_WORD_COUNT = 30;
 
 interface PokedexSubmission {
   category: string;
