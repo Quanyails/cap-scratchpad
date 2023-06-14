@@ -1,9 +1,9 @@
 import { Post } from "./posts";
 import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "./submissions";
 
-const MAX_CATEGORY_LENGTH = 13;
-const MAX_CHARACTER_COUNT = 153;
-const MAX_WORD_COUNT = 30;
+const MAX_CATEGORY_CHARACTER_LENGTH = 13;
+const MAX_ENTRY_CHARACTER_LENGTH = 153;
+const MAX_ENTRY_WORD_COUNT = 30;
 
 interface PokedexSubmission {
   category: string;
@@ -14,15 +14,16 @@ interface PokedexSubmission {
   name: string;
 }
 
-const isCategoryLegal = (category: string): boolean => {
-  return category.length <= MAX_CATEGORY_LENGTH;
+const isCategoryRightLength = (category: string): boolean => {
+  return category.length <= MAX_CATEGORY_CHARACTER_LENGTH;
 };
 
-const isEntryLegal = (entry: string): boolean => {
-  return (
-    entry.split(" ").length <= MAX_WORD_COUNT &&
-    entry.length <= MAX_CHARACTER_COUNT
-  );
+const isEntryRightLength = (entry: string): boolean => {
+  return entry.length <= MAX_ENTRY_CHARACTER_LENGTH;
+};
+
+const isEntryWordsRightLength = (entry: string): boolean => {
+  return entry.split(" ").length <= MAX_ENTRY_WORD_COUNT;
 };
 
 const getSubmission = (
@@ -70,8 +71,10 @@ const getSubmission = (
   }
 
   const [, name, category] = nameAndCategoryMatch[0];
-  if (!isCategoryLegal(category)) {
-    issues.push(`${category} is not legal!`);
+  if (!isCategoryRightLength(category)) {
+    issues.push(
+      `'${category}' is longer than the max length of ${MAX_CATEGORY_CHARACTER_LENGTH}!`
+    );
   }
 
   const entries: { content: string; game: string }[] = [];
@@ -82,9 +85,17 @@ const getSubmission = (
     } else {
       const [, game, content] = entryMatch[0];
 
-      if (!isEntryLegal(content)) {
-        issues.push(`${content} is not legal!`);
-      } else {
+      if (!isEntryRightLength(content)) {
+        issues.push(
+          `'${content}' is longer than the max length of ${MAX_ENTRY_CHARACTER_LENGTH}!`
+        );
+      }
+      if (!isEntryWordsRightLength(content)) {
+        issues.push(
+          `'${content}' has more than ${MAX_ENTRY_WORD_COUNT} words!`
+        );
+      }
+      if (issues.length === 0) {
         entries.push({
           content: content,
           game: game,
