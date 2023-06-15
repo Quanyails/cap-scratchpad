@@ -1,39 +1,36 @@
-import { artSubmissionsHandler } from "./artSubmissions";
-import { nameSubmissionsHandler } from "./nameSubmissions";
-import { pokedexSubmissionsHandler } from "./pokedexSubmissions";
-import { fetchThread } from "./threads";
-import { SubmissionHandler } from "./submissions";
-import { twoStageStatsSubmissionsHandler } from "./twoStageStatSubmissions";
-
-type SubmissionType = "art" | "name" | "pokedex";
+import { makeSlate, SubmissionType } from "./lib/submissions";
+import { createRoot } from "react-dom/client";
+import { createElement } from "react";
+import { Breezi } from "./components/Breezi";
 
 declare global {
   interface Window {
     Breezi: {
-      makeSlate: (url: string, type: SubmissionType) => Promise<string>;
+      makeSlate: (type: SubmissionType, url: string) => Promise<string>;
     };
   }
 }
+declare const __VERSION__: string; // Defined by DeclarePlugin
 
-const makeSlate = async (url: string, type: SubmissionType) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const formatter: SubmissionHandler<any> = {
-    art: artSubmissionsHandler,
-    name: nameSubmissionsHandler,
-    pokedex: pokedexSubmissionsHandler,
-    twoStageStats: twoStageStatsSubmissionsHandler,
-  }[type];
+const BREEZI_CONTAINER_SELECTOR = "body";
 
-  const data = await fetchThread(url);
-  const bbCodes: string[] = data.flatMap(({ el, post }) => {
-    const submission = formatter.getSubmission(el, post);
-    return submission === null
-      ? []
-      : [formatter.formatBbCode(post, submission)];
-  });
-  return bbCodes.join("\n");
+const main = () => {
+  window.Breezi = {
+    makeSlate,
+  };
+
+  const containerEl = document.querySelector(
+    BREEZI_CONTAINER_SELECTOR
+  ) as HTMLBodyElement;
+  const rootEl = document.createElement("div");
+  containerEl.append(rootEl);
+
+  const root = createRoot(rootEl);
+  root.render(
+    createElement(Breezi, {
+      version: __VERSION__,
+    })
+  );
 };
 
-window.Breezi = {
-  makeSlate,
-};
+main();

@@ -59,7 +59,7 @@ be fairly minimal.](https://cloud.google.com/run/pricing)
     ```dockerfile
     FROM node:19-alpine
     WORKDIR /usr/src/app
-    COPY . ./
+    COPY .. ./
     RUN npm ci --only=production
     CMD ["npm", "start"]
     ```

@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const VERSION = new Date().toISOString().slice(0, 10);
+
 module.exports = {
   entry: './src/index.ts',
   module: {
@@ -29,9 +31,12 @@ module.exports = {
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @match        https://www.smogon.com/forums/*
 // @namespace    https://github.com/Quanyails/
-// @version      0.1
+// @version      ${VERSION}
 // ==/UserScript==`,
     raw: true,
+    }),
+    new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify(VERSION),
     })
   ],
   resolve: {
