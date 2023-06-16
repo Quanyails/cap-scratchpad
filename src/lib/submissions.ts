@@ -1,5 +1,8 @@
 import { Post } from "./posts";
-import { artSubmissionsHandler } from "./artSubmissions";
+import {
+  artSubmissionsHandler,
+  twoStageArtSubmissionsHandler,
+} from "./artSubmissions";
 import { nameSubmissionsHandler } from "./nameSubmissions";
 import { pokedexSubmissionsHandler } from "./pokedexSubmissions";
 import { twoStageStatsSubmissionsHandler } from "./twoStageStatSubmissions";
@@ -14,6 +17,7 @@ export enum SubmissionType {
   Art = "art",
   Name = "name",
   Pokedex = "pokedex",
+  TwoStageArt = "twoStageArt",
   TwoStageStats = "twoStageStats",
 }
 
@@ -25,6 +29,7 @@ export const makeSlate = async (type: SubmissionType, url: string) => {
     [SubmissionType.Art]: artSubmissionsHandler,
     [SubmissionType.Name]: nameSubmissionsHandler,
     [SubmissionType.Pokedex]: pokedexSubmissionsHandler,
+    [SubmissionType.TwoStageArt]: twoStageArtSubmissionsHandler,
     [SubmissionType.TwoStageStats]: twoStageStatsSubmissionsHandler,
   }[type];
 
