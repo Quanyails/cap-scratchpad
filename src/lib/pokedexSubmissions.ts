@@ -26,19 +26,16 @@ const isEntryWordsRightLength = (entry: string): boolean => {
   return entry.split(" ").length <= MAX_ENTRY_WORD_COUNT;
 };
 
-const getSubmission = (
-  el: HTMLElement,
-  { textLines, username }: Post
-): PokedexSubmission | null => {
-  const [
-    finalSubmissionText,
-    ,
-    nameAndCategoryLine,
-    ,
-    entryLine1,
-    ,
-    entryLine2,
-  ] = textLines;
+const getSubmissionBase = ({
+  post: { textLines, username },
+  requiredEntryCount,
+}: {
+  el: HTMLElement;
+  post: Post;
+  requiredEntryCount: number;
+}): PokedexSubmission | null => {
+  const [finalSubmissionText, nameAndCategoryLine, ...entryLines] =
+    textLines.filter((_, i) => i % 2 === 0);
 
   const isFinalSubmission =
     finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
@@ -48,9 +45,9 @@ const getSubmission = (
 
   // Doesn't have enough fields
   if (
-    [finalSubmissionText, nameAndCategoryLine, entryLine1, entryLine2].some(
-      (s) => s === undefined
-    )
+    finalSubmissionText === undefined ||
+    nameAndCategoryLine === undefined ||
+    entryLines.length < requiredEntryCount
   ) {
     console.warn(`${username} has an illegal submission!`);
     console.warn("The following submission doesn't have all required lines:");
@@ -78,7 +75,7 @@ const getSubmission = (
   }
 
   const entries: { content: string; game: string }[] = [];
-  for (const entryLine of [entryLine1, entryLine2]) {
+  for (const entryLine of entryLines) {
     const entryMatch = Array.from(entryLine.matchAll(/(.*): (.*)/g));
     if (entryMatch.length === 0 || entryMatch[0].length !== 3) {
       issues.push(`${entryLine} is not formatted correctly!`);
@@ -121,21 +118,21 @@ const formatBbCode = (
   { id, username }: Post,
   { category, entries, name }: PokedexSubmission
 ): string => {
+  const entryBbCodes = entries.map(
+    ({ content, game }) => `[B]${game}[/B]: ${content}`
+  );
+
   return [
     `${username}`,
     `[QUOTE="${username}, post: ${id}"]`,
-    "",
     `[B]${name}[/B], the [B]${category}[/B] Pokémon`,
-    "",
-    `[B]${entries[0].game}[/B]: ${entries[0].content}`,
-    "",
-    `[B]${entries[1].game}[/B]: ${entries[1].content}`,
+    ...entryBbCodes,
     "[/QUOTE]",
-    "",
-  ].join("\n");
+  ].join("\n\n");
 };
 
 export const pokedexSubmissionsHandler: SubmissionHandler<PokedexSubmission> = {
   formatBbCode,
-  getSubmission,
+  getSubmission: (el, post) =>
+    getSubmissionBase({ el, post, requiredEntryCount: 2 }),
 };
