@@ -8,7 +8,7 @@ import { twoStageStatsSubmissionsHandler } from "./submissions/twoStageStatSubmi
 import { fetchThread } from "./threads";
 import { Post } from "./posts";
 import { SubmissionType } from "./submissions/submissions";
-import { validateDuplicatePosts } from "./validators";
+import { validateUniqueUsers } from "./validators";
 
 export interface SubmissionHandler<T> {
   formatBbCode: (post: Post, submission: T) => string;
@@ -31,7 +31,7 @@ export const makeSlate = async (type: SubmissionType, url: string) => {
     const submission = formatter.getSubmission(el, post);
     return submission === null ? [] : [{ post, submission }];
   });
-  validateDuplicatePosts(
+  validateUniqueUsers(
     postSubmissions.map(({ post }) => post),
     1
   );

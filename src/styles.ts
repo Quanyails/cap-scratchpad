@@ -20,6 +20,12 @@ export const FORM_STYLES: CSSProperties = {
   gap: CSS_UNIT,
 };
 
+export const LABEL_STYLES: CSSProperties = {
+  alignItems: "center",
+  display: "flex",
+  gap: CSS_UNIT,
+};
+
 export const SIDEBAR_STYLES: CSSProperties = {
   boxShadow: "0 2px 5px 0 rgba(0,0,0,0.25)", // mirror of BG_SELECTOR boxShadow
   backgroundColor:
@@ -31,10 +37,4 @@ export const SIDEBAR_STYLES: CSSProperties = {
     rules
       .filter((rule) => rule.selectorText.includes(BG_SELECTOR))
       .find((rule) => rule.style.transition)?.style.transition ?? "none",
-};
-
-export const SELECT_STYLES: CSSProperties = {
-  alignItems: "center",
-  display: "flex",
-  gap: CSS_UNIT,
 };

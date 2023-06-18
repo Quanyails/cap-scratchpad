@@ -3,10 +3,20 @@ import { createRoot } from "react-dom/client";
 import { createElement } from "react";
 import { Breezi } from "./components/Breezi";
 import { makeSlate } from "./lib/slater";
+import { makeBallots } from "./lib/ballots/ballotMaker";
+import { BallotFormat } from "./lib/ballots/ballotFormatter";
 
 declare global {
   interface Window {
     Breezi: {
+      makeBallots: (
+        ballotStyle: BallotFormat,
+        url: string,
+        options: {
+          skipFirst: boolean;
+          skipLast: boolean;
+        }
+      ) => Promise<string>;
       makeSlate: (type: SubmissionType, url: string) => Promise<string>;
     };
   }
@@ -17,6 +27,7 @@ const BREEZI_CONTAINER_SELECTOR = "body";
 
 const main = () => {
   window.Breezi = {
+    makeBallots,
     makeSlate,
   };
 

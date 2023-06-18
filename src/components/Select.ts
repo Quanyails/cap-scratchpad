@@ -1,17 +1,17 @@
 import { ChangeEvent, createElement, useCallback } from "react";
-import { SELECT_STYLES } from "../styles";
+import { LABEL_STYLES } from "../styles";
 
 export const Select = <T>({
-  currentItem,
   items,
   label,
   onChange,
+  selectedItem,
   toValue,
 }: {
-  currentItem: T;
   items: T[];
   label: string;
   onChange: (submittedItem: T) => void;
+  selectedItem: T;
   toValue: (item: T) => string;
 }) => {
   const handleChange = useCallback<(e: ChangeEvent<HTMLSelectElement>) => void>(
@@ -29,14 +29,14 @@ export const Select = <T>({
   return createElement(
     "label",
     {
-      style: SELECT_STYLES,
+      style: LABEL_STYLES,
     },
     createElement("span", {}, label),
     createElement(
       "select",
       {
         onChange: handleChange,
-        value: toValue(currentItem),
+        value: toValue(selectedItem),
       },
       ...items.map((t, i) => {
         const value = toValue(t);
