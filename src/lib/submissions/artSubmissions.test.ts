@@ -1,4 +1,4 @@
-import { buildTestPost } from "./posts";
+import { buildTestPost } from "../posts";
 import {
   artSubmissionsHandler,
   twoStageArtSubmissionsHandler,
@@ -19,7 +19,7 @@ test("Minimal submission", () => {
     "text/html"
   ).documentElement;
 
-  const post = buildTestPost("Final Submission");
+  const post = buildTestPost({ message: "Final Submission" });
   const submission = artSubmissionsHandler.getSubmission(el, post);
   expect(submission).not.toBeNull();
 });
@@ -42,7 +42,7 @@ test("Maximal submission", () => {
     "text/html"
   ).documentElement;
 
-  const post = buildTestPost("Final Submission");
+  const post = buildTestPost({ message: "Final Submission" });
   const submission = artSubmissionsHandler.getSubmission(el, post);
   expect(submission).not.toBeNull();
 });
@@ -64,7 +64,7 @@ test("Two stage submission", () => {
     "text/html"
   ).documentElement;
 
-  const post = buildTestPost("Final Submission");
+  const post = buildTestPost({ message: "Final Submission" });
   const submission = twoStageArtSubmissionsHandler.getSubmission(el, post);
   expect(submission).not.toBeNull();
 });

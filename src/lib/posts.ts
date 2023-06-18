@@ -20,7 +20,13 @@ const POST_ID_DATA_ATTR = "data-lb-id";
 const POST_ID_SELECTOR = ".message-userContent";
 const USERNAME_SELECTOR = ".message-name";
 
-export const buildTestPost = (message: string): Post => {
+export const buildTestPost = ({
+  message,
+  username = "username",
+}: {
+  message: string;
+  username?: string;
+}): Post => {
   return {
     boldedLines: [],
     id: -1,
@@ -29,8 +35,8 @@ export const buildTestPost = (message: string): Post => {
       .trim()
       .split("\n")
       .map((s) => s.trim()),
-    url: "http://example.com",
-    username: "username",
+    url: "https://example.com",
+    username,
   };
 };
 

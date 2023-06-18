@@ -1,5 +1,6 @@
-import { Post } from "./posts";
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "./submissions";
+import { Post } from "../posts";
+
+import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
 
 const MAX_CATEGORY_CHARACTER_LENGTH = 13;
 const MAX_ENTRY_CHARACTER_LENGTH = 153;

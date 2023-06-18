@@ -1,28 +1,21 @@
-import { Post } from "./posts";
 import {
   artSubmissionsHandler,
   twoStageArtSubmissionsHandler,
-} from "./artSubmissions";
-import { nameSubmissionsHandler } from "./nameSubmissions";
-import { pokedexSubmissionsHandler } from "./pokedexSubmissions";
-import { twoStageStatsSubmissionsHandler } from "./twoStageStatSubmissions";
+} from "./submissions/artSubmissions";
+import { nameSubmissionsHandler } from "./submissions/nameSubmissions";
+import { pokedexSubmissionsHandler } from "./submissions/pokedexSubmissions";
+import { twoStageStatsSubmissionsHandler } from "./submissions/twoStageStatSubmissions";
 import { fetchThread } from "./threads";
+import { Post } from "./posts";
+import { SubmissionType } from "./submissions/submissions";
+import { validateDuplicatePosts } from "./validators";
 
 export interface SubmissionHandler<T> {
   formatBbCode: (post: Post, submission: T) => string;
   getSubmission: (el: HTMLElement, post: Post) => T | null;
 }
 
-export enum SubmissionType {
-  Art = "art",
-  Name = "name",
-  Pokedex = "pokedex",
-  TwoStageArt = "twoStageArt",
-  TwoStageStats = "twoStageStats",
-}
-
 export const FINAL_SUBMISSION_TEXT = "final submission";
-
 export const makeSlate = async (type: SubmissionType, url: string) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formatter: SubmissionHandler<any> = {
@@ -34,11 +27,17 @@ export const makeSlate = async (type: SubmissionType, url: string) => {
   }[type];
 
   const data = await fetchThread(url);
-  const bbCodes: string[] = data.flatMap(({ el, post }) => {
+  const postSubmissions = data.flatMap(({ el, post }) => {
     const submission = formatter.getSubmission(el, post);
-    return submission === null
-      ? []
-      : [formatter.formatBbCode(post, submission)];
+    return submission === null ? [] : [{ post, submission }];
+  });
+  validateDuplicatePosts(
+    postSubmissions.map(({ post }) => post),
+    1
+  );
+
+  const bbCodes: string[] = postSubmissions.map(({ post, submission }) => {
+    return formatter.formatBbCode(post, submission);
   });
   return bbCodes.join("\n");
 };

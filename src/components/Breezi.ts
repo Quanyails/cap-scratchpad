@@ -1,11 +1,12 @@
 import { createElement, useState } from "react";
 import { SlaterForm } from "./SlaterForm";
 import { Message } from "../Message";
-import { makeSlate, SubmissionType } from "../lib/submissions";
+import { SubmissionType } from "../lib/submissions/submissions";
 import { Sidebar } from "./Sidebar";
 import { CSS_UNIT } from "../styles";
 import { sleep } from "../util/async";
 import { Select } from "./Select";
+import { makeSlate } from "../lib/slater";
 
 enum Tool {
   SLATER = "slater",

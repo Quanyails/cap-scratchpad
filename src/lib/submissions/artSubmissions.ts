@@ -1,16 +1,16 @@
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "./submissions";
-import { Post } from "./posts";
-
-interface ArtSubmission {
-  hasSupportingMaterial: boolean;
-  imageUrls: string[];
-}
+import { Post } from "../posts";
+import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
 
 const HR =
   "--------------------------------------------------------------------------------------------";
 const IMG_SELECTOR = ".bbImage";
 const IMG_SRC = "src";
 const SUPPORTING_MATERIAL_TEXT = "supporting material";
+
+interface ArtSubmission {
+  hasSupportingMaterial: boolean;
+  imageUrls: string[];
+}
 
 const getSubmissionBase = ({
   el,

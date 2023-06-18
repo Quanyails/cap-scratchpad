@@ -1,5 +1,5 @@
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "./submissions";
-import { Post } from "./posts";
+import { Post } from "../posts";
+import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
 
 interface NameSubmission {
   name: string;

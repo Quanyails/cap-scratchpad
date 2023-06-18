@@ -1,7 +1,8 @@
-import { makeSlate, SubmissionType } from "./lib/submissions";
+import { SubmissionType } from "./lib/submissions/submissions";
 import { createRoot } from "react-dom/client";
 import { createElement } from "react";
 import { Breezi } from "./components/Breezi";
+import { makeSlate } from "./lib/slater";
 
 declare global {
   interface Window {

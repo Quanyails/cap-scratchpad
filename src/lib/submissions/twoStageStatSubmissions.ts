@@ -1,6 +1,6 @@
-import { Post } from "./posts";
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "./submissions";
-import { formatStats, parseStats, Stats } from "./stats";
+import { Post } from "../posts";
+import { formatStats, parseStats, Stats } from "../stats";
+import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
 
 interface TwoStageStatsSubmission {
   stage1: Stats;
