@@ -23,7 +23,7 @@ export const Breezi = ({ version }: { version: string }) => {
           items: Object.values(SubmissionType),
           onSubmit: async (s: SubmissionType) => {
             const result = await makeSlate(s, location.href);
-            setResult(result);
+            setResult(result ? result : Message.NoResults);
           },
         })
       : null;
