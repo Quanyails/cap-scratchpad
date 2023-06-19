@@ -1,10 +1,8 @@
 import { Post } from "../posts";
 import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
+import { Message } from "../../message";
+import { IMG_SELECTOR } from "../../querySelectors";
 
-const HR =
-  "--------------------------------------------------------------------------------------------";
-const IMG_SELECTOR = ".bbImage";
-const IMG_SRC = "src";
 const SUPPORTING_MATERIAL_TEXT = "supporting material";
 
 interface ArtSubmission {
@@ -30,7 +28,7 @@ const getSubmissionBase = ({
     (line) => line.toLowerCase() === SUPPORTING_MATERIAL_TEXT
   );
   const imgUrls = Array.from(el.querySelectorAll(IMG_SELECTOR)).map((img) => {
-    const src = img.getAttribute(IMG_SRC) ?? "";
+    const src = img.getAttribute("src") ?? "";
     return new URL(src, location.href).href;
   });
   if (imgUrls.length < requiredImageCount) {
@@ -60,13 +58,18 @@ const formatBbCodeBase = ({
   return (
     hasSupportingMaterial
       ? [
-          HR,
+          Message.Divider,
           `[B]${username}[/B]`,
           ...imageBbCodes,
           `[URL=${url}]Supporting Material[/URL]`,
-          HR,
+          Message.Divider,
         ]
-      : [HR, `[B]${username}[/B]`, ...imageBbCodes, HR]
+      : [
+          Message.Divider,
+          `[B]${username}[/B]`,
+          ...imageBbCodes,
+          Message.Divider,
+        ]
   ).join("\n");
 };
 

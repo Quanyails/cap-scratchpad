@@ -8,9 +8,7 @@ afterEach(() => {
 test("validate ballot count", () => {
   const spy = jest.spyOn(console, "warn");
 
-  const ballot = {
-    ranking: [["foo"], ["foo", "bar"]],
-  };
+  const ballot = [["foo"], ["foo", "bar"]];
 
   validateUniqueBallot(ballot, 1);
 

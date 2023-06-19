@@ -1,3 +1,5 @@
+import { TITLE_SELECTOR } from "../querySelectors";
+
 export interface Post {
   boldedLines: string[];
   /* The unique ID of the post. */
@@ -38,6 +40,10 @@ export const buildTestPost = ({
     url: "https://example.com",
     username,
   };
+};
+
+export const getPageTitle = () => {
+  return document.querySelector(TITLE_SELECTOR)?.textContent?.trim() ?? "";
 };
 
 export const extractSpanText = (el: HTMLElement, tagName: string): string[] => {

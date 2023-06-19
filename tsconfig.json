@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     "jsx": "react",
-    "lib": ["DOM", "ES2021.String"],
+    "lib": ["DOM", "ES2021.Intl", "ES2021.String"],
     "noImplicitAny": true,
     "module": "es6",
     "moduleResolution": "node",
     "rootDir": "./src/",
     "outDir": "./dist/",
     "strict": true,
-    "target": "es6"
+    "target": "es2021"
   },
   "include": [
     "./src/"

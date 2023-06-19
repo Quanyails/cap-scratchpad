@@ -7,43 +7,83 @@ import { makeSlate } from "../lib/slater";
 import { Select } from "./Select";
 import { makeBallots } from "../lib/ballots/ballotMaker";
 import { Toggle } from "./Toggle";
-import { BallotFormat } from "../lib/ballots/ballotFormatter";
+import { BallotFormat, formatters } from "../lib/ballots/ballotFormatter";
+import {
+  getApproval,
+  getBordaCount,
+  getRankedPairs,
+} from "../lib/voting/votingCalculator";
+import {
+  formatApproval,
+  formatRankedPairs,
+} from "../lib/voting/votingMethodFormatter";
+import { getPageTitle } from "../lib/posts";
+import { formatBallots } from "../lib/voting/votingResultformatter";
 
 export const BreeziForm = ({
   onSubmit,
 }: {
-  onSubmit: (result: string) => Promise<void>;
+  onSubmit: (result: string) => void;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Form elements
-  const [ballotStyle, setBallotStyle] = useState(BallotFormat.Pollkritter);
+  const [ballotFormat, setBallotFormat] = useState(BallotFormat.Pollkritter);
   const [skipFirstPost, setSkipFirstPost] = useState(true);
   const [skipLastPost, setSkipLastPost] = useState(false);
   const [submissionType, setSubmissionType] = useState(SubmissionType.Art);
   const [tool, setTool] = useState(Tool.Slater);
+  const [isRanked, setIsRanked] = useState(true);
 
   const handleSubmit = useCallback(async () => {
+    let result: string;
+
     switch (tool) {
       case Tool.BallotMaker: {
-        const result = await makeBallots(ballotStyle, location.href, {
+        const ballots = await makeBallots(ballotFormat, location.href, {
           skipFirst: skipFirstPost,
           skipLast: skipLastPost,
         });
-        await onSubmit(result);
+        result = formatters[ballotFormat](ballots);
         break;
       }
       case Tool.Slater: {
-        const result = await makeSlate(submissionType, location.href);
-        await onSubmit(result);
+        result = await makeSlate(submissionType, location.href);
+        break;
+      }
+      case Tool.VotingCalculator: {
+        const ballots = await makeBallots(ballotFormat, location.href, {
+          skipFirst: skipFirstPost,
+          skipLast: skipLastPost,
+        });
+        if (isRanked) {
+          const bordaCount = getBordaCount(ballots);
+          const rankedPairs = getRankedPairs(ballots);
+          result = [
+            getPageTitle(),
+            ` # ${Message.RankedPairs.toUpperCase()} #`,
+            formatBallots(ballots),
+            formatRankedPairs(bordaCount, rankedPairs),
+          ].join("\n\n");
+        } else {
+          const approval = getApproval(ballots);
+          result = [
+            getPageTitle(),
+            ` # ${Message.Approval.toUpperCase()} #`,
+            formatBallots(ballots),
+            formatApproval(approval),
+          ].join("\n\n");
+        }
         break;
       }
       default: {
         throw new Error(`Unexpected tool type selected: ${tool}`);
       }
     }
+    onSubmit(result);
   }, [
-    ballotStyle,
+    ballotFormat,
+    isRanked,
     onSubmit,
     skipFirstPost,
     skipLastPost,
@@ -84,12 +124,19 @@ export const BreeziForm = ({
       ? createElement(Select<BallotFormat>, {
           items: Object.values(BallotFormat),
           label: Message.BallotFormat,
-          onChange: setBallotStyle,
-          selectedItem: ballotStyle,
+          onChange: setBallotFormat,
+          selectedItem: ballotFormat,
           toValue: (t) => `${t}`,
         })
       : null,
-    tool === Tool.BallotMaker
+    tool === Tool.VotingCalculator
+      ? createElement(Toggle, {
+          onChange: setIsRanked,
+          label: Message.RankedPoll,
+          value: isRanked,
+        })
+      : null,
+    tool === Tool.BallotMaker || tool === Tool.VotingCalculator
       ? createElement(
           "div",
           {},

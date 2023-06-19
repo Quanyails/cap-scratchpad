@@ -5,8 +5,8 @@ import {
 
 test("format Eric Gorr ballots", () => {
   const ballots = [
-    { ranking: [["foo"], ["bar", "baz"]] },
-    { ranking: [["qux"], ["quux"], ["corge"]] },
+    [["foo"], ["bar", "baz"]],
+    [["qux"], ["quux"], ["corge"]],
   ];
   const formatted = formatEricGorrBallots(ballots);
   expect(formatted).toBe(`foo>bar=baz
@@ -17,8 +17,8 @@ qux>quux>corge`);
 
 test("format Pollkritter ballots", () => {
   const ballots = [
-    { ranking: [["foo"], ["bar", "baz"]] },
-    { ranking: [["qux"], ["quux"], ["corge"]] },
+    [["foo"], ["bar", "baz"]],
+    [["qux"], ["quux"], ["corge"]],
   ];
   const formatted = formatPollkritterBallots(ballots);
   expect(formatted).toBe(`poll://foo>bar=baz,qux>quux>corge`);

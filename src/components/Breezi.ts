@@ -8,7 +8,7 @@ export const Breezi = ({ version }: { version: string }) => {
   const [isCopying, setIsCopying] = useState(false);
   const [result, setResult] = useState("");
 
-  const handleSubmit = useCallback(async (r: string) => {
+  const handleSubmit = useCallback((r: string) => {
     setResult(r ? r : Message.NoResults);
   }, []);
 

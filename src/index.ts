@@ -5,6 +5,7 @@ import { Breezi } from "./components/Breezi";
 import { makeSlate } from "./lib/slater";
 import { makeBallots } from "./lib/ballots/ballotMaker";
 import { BallotFormat } from "./lib/ballots/ballotFormatter";
+import { Ballot } from "./lib/ballots/ballots";
 
 declare global {
   interface Window {
@@ -16,7 +17,7 @@ declare global {
           skipFirst: boolean;
           skipLast: boolean;
         }
-      ) => Promise<string>;
+      ) => Promise<Ballot[]>;
       makeSlate: (type: SubmissionType, url: string) => Promise<string>;
     };
   }

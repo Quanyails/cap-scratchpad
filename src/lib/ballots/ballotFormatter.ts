@@ -8,7 +8,7 @@ export enum BallotFormat {
 
 export const formatEricGorrBallots = (ballots: Ballot[]) => {
   return ballots
-    .map(({ ranking }) => ranking.map((line) => line.join("=")).join(">"))
+    .map((ballot) => ballot.map((line) => line.join("=")).join(">"))
     .join("\n");
 };
 
@@ -17,6 +17,12 @@ export const formatJsonBallots = (ballots: Ballot[]) => {
 };
 export const formatPollkritterBallots = (ballots: Ballot[]) => {
   return `poll://${ballots
-    .map(({ ranking }) => ranking.map((line) => line.join("=")).join(">"))
+    .map((ballot) => ballot.map((line) => line.join("=")).join(">"))
     .join(",")}`;
+};
+
+export const formatters: Record<BallotFormat, (ballots: Ballot[]) => string> = {
+  [BallotFormat.EricGorr]: formatEricGorrBallots,
+  [BallotFormat.Json]: formatJsonBallots,
+  [BallotFormat.Pollkritter]: formatPollkritterBallots,
 };

@@ -1,8 +1,6 @@
 import { Post } from "../posts";
 
-export interface Ballot {
-  ranking: string[][];
-}
+export type Ballot = string[][];
 
 export const makeBallot = (
   _: HTMLElement,
@@ -16,5 +14,5 @@ export const makeBallot = (
   const ballots = ballotLines.map((line) =>
     line.split(",").map((b) => b.trim())
   );
-  return ballots.length === 0 ? null : { ranking: ballots };
+  return ballots.length === 0 ? null : ballots;
 };

@@ -1,4 +1,5 @@
 import { parseElement, Post } from "./posts";
+import { NEXT_SELECTOR, POST_SELECTOR } from "../querySelectors";
 
 interface Datum {
   el: HTMLElement;
@@ -10,15 +11,7 @@ interface Page {
   nextUrl: string | undefined;
 }
 
-const NEXT_SELECTOR = "a.pageNav-jump--next";
-const POST_SELECTOR = '[data-lb-id^="thread"] .message';
-
-const SMOGON_HOSTNAME = "smogon.com";
-
 const fetchPage = async (url: string): Promise<Page> => {
-  if (!location.hostname.includes(SMOGON_HOSTNAME)) {
-    throw new Error(`Script must be run on ${SMOGON_HOSTNAME}`);
-  }
   const response = await fetch(url);
   const text = await response.text();
   const el = document.createElement("div");

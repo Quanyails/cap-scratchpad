@@ -3,7 +3,7 @@ import { Post } from "./posts";
 import { Ballot } from "./ballots/ballots";
 
 export const validateUniqueBallot = (ballot: Ballot, max: number) => {
-  const options = groupBy(ballot.ranking.flat(2), (option) => option);
+  const options = groupBy(ballot.flat(2), (option) => option);
   Object.entries(options).forEach(([option, repeats]) => {
     if (repeats.length > max) {
       console.warn(

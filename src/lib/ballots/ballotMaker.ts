@@ -1,11 +1,6 @@
 import { fetchThread } from "../threads";
 import { makeBallot } from "./ballots";
-import {
-  BallotFormat,
-  formatEricGorrBallots,
-  formatJsonBallots,
-  formatPollkritterBallots,
-} from "./ballotFormatter";
+import { BallotFormat } from "./ballotFormatter";
 import { validateUniqueBallot, validateUniqueUsers } from "../validators";
 
 export const makeBallots = async (
@@ -33,20 +28,5 @@ export const makeBallots = async (
     1
   );
 
-  const ballots = postBallots.map(({ ballot }) => ballot);
-
-  switch (ballotStyle) {
-    case BallotFormat.EricGorr: {
-      return formatEricGorrBallots(ballots);
-    }
-    case BallotFormat.Json: {
-      return formatJsonBallots(ballots);
-    }
-    case BallotFormat.Pollkritter: {
-      return formatPollkritterBallots(ballots);
-    }
-    default: {
-      throw new Error(`Unexpected ballot style: ${ballotStyle}`);
-    }
-  }
+  return postBallots.map(({ ballot }) => ballot);
 };
