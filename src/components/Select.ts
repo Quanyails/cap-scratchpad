@@ -23,7 +23,7 @@ export const Select = <T>({
         onChange(changedItem);
       }
     },
-    [...items]
+    [items, onChange, toValue]
   );
 
   return createElement(
