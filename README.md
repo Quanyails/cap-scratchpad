@@ -35,6 +35,7 @@ Any issues found by the selected tool will be displayed in your browser's develo
 
 Run targets:
 
-- build: `npm run breezi`
-- format/lint: `npm run lint`
+- build: `npm run build`
+- format: `npm run format`
+- lint: `npm run lint`
 - test: `npm run test`

@@ -18,8 +18,10 @@
     "webpack-cli": "^5.1.1"
   },
   "scripts": {
-    "breezi": "npx webpack",
-    "lint": "npx prettier --write src && npx eslint --fix src",
+    "all": "npm run format && npm run lint && npm run test && npm run build",
+    "build": "npx webpack",
+    "format": "npx prettier --write src",
+    "lint": "npx eslint --fix src",
     "test": "npx jest"
   },
   "devDependencies": {
