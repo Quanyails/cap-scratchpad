@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "jsx": "react",
     "lib": ["DOM", "ES2021.Intl", "ES2021.String"],
     "noImplicitAny": true,

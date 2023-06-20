@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@jest/globals": "^29.5.0",
+    "@stdlib/stats-base-dists-beta-cdf": "^0.0.7",
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.14.195",
     "@types/react-dom": "^18.2.5",

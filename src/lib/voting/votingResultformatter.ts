@@ -1,6 +1,7 @@
 import { Matrix } from "votes";
 import { Message } from "../../message";
 import { Ballot } from "../ballots/ballots";
+import { getConfidence } from "./confidence";
 
 const listFormatter = new Intl.ListFormat("en", {
   style: "long",
@@ -12,6 +13,17 @@ export const formatBallots = (ballots: Ballot[]) => {
     `${Message.Ballots} ${ballots.length}`,
     `${Message.Preferences} ${ballots.flat(2).length}`,
   ].join("\n");
+};
+
+export const formatConfidence = (ranking: string[][], matrix: Matrix) => {
+  const confidence = getConfidence(ranking[0], matrix);
+  const formattedConfidence =
+    confidence < 0.0001
+      ? "< 0.01%"
+      : confidence > 0.999
+      ? "> 99.9%"
+      : `= ${(confidence * 100).toFixed(1)}%`;
+  return `${Message.Confidence} ${formattedConfidence}`;
 };
 
 export const formatMatrix = ({ array, candidates }: Matrix) => {

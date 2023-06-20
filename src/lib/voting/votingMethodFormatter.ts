@@ -1,5 +1,6 @@
 import { Approbation, Borda, RankedPairs, utils } from "votes";
 import {
+  formatConfidence,
   formatMatrix,
   formatRanking,
   formatScores,
@@ -7,7 +8,7 @@ import {
   getBordaCountHeader,
   getRundownHeader,
 } from "./votingResultformatter";
-import { getFrontrunners } from "./votingUtil";
+import { getFrontrunners } from "./frontrunners";
 
 export const formatApproval = (approval: Approbation) => {
   return [
@@ -37,5 +38,6 @@ export const formatRankedPairs = (
     formatScores(rpRanking, bordaScores),
     getRundownHeader(),
     formatRanking(ranking, frontrunners),
+    formatConfidence(ranking, matrix),
   ].join("\n\n");
 };

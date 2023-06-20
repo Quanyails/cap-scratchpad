@@ -4,6 +4,7 @@ export enum Message {
   Ballots = "Ballots:",
   BordaCount = "Borda Count",
   Breezi = "Breezi",
+  Confidence = "Conclusiveness",
   Copied = "Copied!",
   Copy = "Copy",
   Divider = "——————————————————————",

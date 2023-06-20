@@ -1,4 +1,4 @@
-import { getFrontrunners } from "./votingUtil";
+import { getFrontrunners } from "./frontrunners";
 
 test("no frontrunners", () => {
   const result = getFrontrunners([["foo"], ["bar"]], {
