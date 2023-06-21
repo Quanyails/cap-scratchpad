@@ -13,10 +13,7 @@ test("Minimal submission", () => {
     `,
   });
 
-  const submission = pokedexSubmissionsHandler.getSubmission(
-    {} as HTMLElement,
-    post
-  );
+  const submission = pokedexSubmissionsHandler.getSubmission(post);
 
   expect(submission).not.toBeNull();
 });
@@ -33,10 +30,7 @@ test("Overly-long submission", () => {
     `,
   });
 
-  const submission = pokedexSubmissionsHandler.getSubmission(
-    {} as HTMLElement,
-    post
-  );
+  const submission = pokedexSubmissionsHandler.getSubmission(post);
 
   expect(submission).toBeNull();
 });

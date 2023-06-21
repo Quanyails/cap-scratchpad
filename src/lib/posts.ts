@@ -1,7 +1,9 @@
-import { TITLE_SELECTOR } from "../querySelectors";
+import { IMG_SELECTOR, TITLE_SELECTOR } from "../querySelectors";
 
 export interface Post {
   boldedLines: string[];
+  /* Image URLs in the post, if any. */
+  imageUrls: string[];
   /* The unique ID of the post. */
   id: number;
   /* Post content as plain text. */
@@ -23,15 +25,18 @@ const POST_ID_SELECTOR = ".message-userContent";
 const USERNAME_SELECTOR = ".message-name";
 
 export const buildTestPost = ({
+  imageUrls = [],
   message,
   username = "username",
 }: {
+  imageUrls?: string[];
   message: string;
   username?: string;
 }): Post => {
   return {
     boldedLines: [],
     id: -1,
+    imageUrls,
     textContent: message.trim(),
     textLines: message
       .trim()
@@ -57,20 +62,10 @@ export const extractSpanText = (el: HTMLElement, tagName: string): string[] => {
     .filter((s) => s);
 };
 
-export const parseElement = (el: HTMLElement): Post | null => {
+export const makePost = (el: HTMLElement): Post | null => {
   if (el.matches(MESSAGE_DELETED_SELECTOR)) {
     return null;
   }
-  // Bold tags can be nested, so check top-level bold tags only.
-  const boldedLines = el.querySelector(MESSAGE_SELECTOR)
-    ? extractSpanText(el.querySelector(MESSAGE_SELECTOR) as HTMLElement, "B")
-    : [];
-
-  const id = Number(
-    (
-      el.querySelector(POST_ID_SELECTOR)?.getAttribute(POST_ID_DATA_ATTR) ?? ""
-    ).replace("post-", "")
-  );
 
   const relativeUrl =
     el.querySelector(LINK_SELECTOR)?.getAttribute("href") ?? "";
@@ -85,8 +80,20 @@ export const parseElement = (el: HTMLElement): Post | null => {
   const url = new URL(relativeUrl, location.href).href;
 
   return {
-    boldedLines,
-    id,
+    // Bold tags can be nested, so check top-level bold tags only.
+    boldedLines: el.querySelector(MESSAGE_SELECTOR)
+      ? extractSpanText(el.querySelector(MESSAGE_SELECTOR) as HTMLElement, "B")
+      : [],
+    imageUrls: Array.from(el.querySelectorAll(IMG_SELECTOR)).map((img) => {
+      const src = img.getAttribute("src") ?? "";
+      return new URL(src, location.href).href;
+    }),
+    id: Number(
+      (
+        el.querySelector(POST_ID_SELECTOR)?.getAttribute(POST_ID_DATA_ATTR) ??
+        ""
+      ).replace("post-", "")
+    ),
     textContent,
     textLines,
     url,

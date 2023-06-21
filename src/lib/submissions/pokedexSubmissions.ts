@@ -13,6 +13,8 @@ interface PokedexSubmission {
     game: string;
   }[];
   name: string;
+  postId: number;
+  username: string;
 }
 
 const isCategoryRightLength = (category: string): boolean => {
@@ -28,10 +30,9 @@ const isEntryWordsRightLength = (entry: string): boolean => {
 };
 
 const getSubmissionBase = ({
-  post: { textLines, username },
+  post: { id, textLines, username },
   requiredEntryCount,
 }: {
-  el: HTMLElement;
   post: Post;
   requiredEntryCount: number;
 }): PokedexSubmission | null => {
@@ -46,7 +47,6 @@ const getSubmissionBase = ({
 
   // Doesn't have enough fields
   if (
-    finalSubmissionText === undefined ||
     nameAndCategoryLine === undefined ||
     entryLines.length < requiredEntryCount
   ) {
@@ -112,20 +112,25 @@ const getSubmissionBase = ({
     category,
     entries,
     name,
+    postId: id,
+    username,
   };
 };
 
-const formatBbCode = (
-  { id, username }: Post,
-  { category, entries, name }: PokedexSubmission
-): string => {
+const formatBbCode = ({
+  category,
+  entries,
+  name,
+  postId,
+  username,
+}: PokedexSubmission): string => {
   const entryBbCodes = entries.map(
     ({ content, game }) => `[B]${game}[/B]: ${content}`
   );
 
   return [
     `${username}`,
-    `[QUOTE="${username}, post: ${id}"]`,
+    `[QUOTE="${username}, post: ${postId}"]`,
     `[B]${name}[/B], the [B]${category}[/B] Pokémon`,
     ...entryBbCodes,
     "[/QUOTE]",
@@ -134,6 +139,5 @@ const formatBbCode = (
 
 export const pokedexSubmissionsHandler: SubmissionHandler<PokedexSubmission> = {
   formatBbCode,
-  getSubmission: (el, post) =>
-    getSubmissionBase({ el, post, requiredEntryCount: 2 }),
+  getSubmission: (post) => getSubmissionBase({ post, requiredEntryCount: 2 }),
 };

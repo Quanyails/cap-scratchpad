@@ -3,8 +3,10 @@ import { formatStats, parseStats, Stats } from "../stats";
 import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
 
 interface TwoStageStatsSubmission {
+  postUrl: string;
   stage1: Stats;
   stage2: Stats;
+  username: string;
 }
 
 const STAGE_1_TEXT = "Stage 1:";
@@ -38,10 +40,11 @@ const findStats = (lines: string[], stageText: string): Stats | undefined => {
   return found.length === 0 ? undefined : found[0];
 };
 
-const getSubmission = (
-  el: HTMLElement,
-  { textLines, username }: Post
-): TwoStageStatsSubmission | null => {
+const getSubmission = ({
+  textLines,
+  username,
+  url,
+}: Post): TwoStageStatsSubmission | null => {
   const [finalSubmissionText] = textLines;
 
   const isFinalSubmission =
@@ -63,16 +66,20 @@ const getSubmission = (
   }
 
   return {
+    postUrl: url,
     stage1,
     stage2,
+    username,
   };
 };
 
-const formatBbCode = (
-  { url, username }: Post,
-  { stage1, stage2 }: TwoStageStatsSubmission
-): string => {
-  return `[URL="${url}"]${username}[/URL]: ${formatStats(
+const formatBbCode = ({
+  postUrl,
+  stage1,
+  stage2,
+  username,
+}: TwoStageStatsSubmission): string => {
+  return `[URL="${postUrl}"]${username}[/URL]: ${formatStats(
     stage1
   )} -> ${formatStats(stage2)}`;
 };

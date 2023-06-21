@@ -1,21 +1,20 @@
 import { Post } from "../posts";
 import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
 import { Message } from "../../message";
-import { IMG_SELECTOR } from "../../querySelectors";
 
 const SUPPORTING_MATERIAL_TEXT = "supporting material";
 
 interface ArtSubmission {
   hasSupportingMaterial: boolean;
   imageUrls: string[];
+  postUrl: string;
+  username: string;
 }
 
 const getSubmissionBase = ({
-  el,
-  post: { textLines, username },
+  post: { imageUrls, textLines, url, username },
   requiredImageCount,
 }: {
-  el: HTMLElement;
   post: Post;
   requiredImageCount: number;
 }): ArtSubmission | null => {
@@ -27,29 +26,25 @@ const getSubmissionBase = ({
   const hasSupportingMaterial = textLines.some(
     (line) => line.toLowerCase() === SUPPORTING_MATERIAL_TEXT
   );
-  const imgUrls = Array.from(el.querySelectorAll(IMG_SELECTOR)).map((img) => {
-    const src = img.getAttribute("src") ?? "";
-    return new URL(src, location.href).href;
-  });
-  if (imgUrls.length < requiredImageCount) {
+  if (imageUrls.length < requiredImageCount) {
     console.warn(
-      `${username} needs ${requiredImageCount} for a final submission but only provided ${imgUrls.length}.`
+      `${username} needs ${requiredImageCount} for a final submission but only provided ${imageUrls.length}.`
     );
     return null;
   }
   return {
     hasSupportingMaterial,
-    imageUrls: imgUrls,
+    imageUrls,
+    postUrl: url,
+    username,
   };
 };
 
 const formatBbCodeBase = ({
-  artSubmission: { hasSupportingMaterial, imageUrls },
-  post: { url, username },
+  artSubmission: { hasSupportingMaterial, imageUrls, postUrl, username },
   requiredImageCount,
 }: {
   artSubmission: ArtSubmission;
-  post: Post;
   requiredImageCount: number;
 }): string => {
   const imageBbCodes = imageUrls
@@ -61,7 +56,7 @@ const formatBbCodeBase = ({
           Message.Divider,
           `[B]${username}[/B]`,
           ...imageBbCodes,
-          `[URL=${url}]Supporting Material[/URL]`,
+          `[URL=${postUrl}]Supporting Material[/URL]`,
           Message.Divider,
         ]
       : [
@@ -74,30 +69,26 @@ const formatBbCodeBase = ({
 };
 
 export const artSubmissionsHandler: SubmissionHandler<ArtSubmission> = {
-  formatBbCode: (post, submission) =>
+  formatBbCode: (submission) =>
     formatBbCodeBase({
       artSubmission: submission,
-      post,
       requiredImageCount: 1,
     }),
-  getSubmission: (el, post) =>
+  getSubmission: (post) =>
     getSubmissionBase({
-      el,
       post,
       requiredImageCount: 1,
     }),
 };
 
 export const twoStageArtSubmissionsHandler: SubmissionHandler<ArtSubmission> = {
-  formatBbCode: (post, submission) =>
+  formatBbCode: (submission) =>
     formatBbCodeBase({
       artSubmission: submission,
-      post,
       requiredImageCount: 2,
     }),
-  getSubmission: (el, post) =>
+  getSubmission: (post) =>
     getSubmissionBase({
-      el,
       post,
       requiredImageCount: 2,
     }),

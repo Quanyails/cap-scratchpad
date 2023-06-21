@@ -21,4 +21,5 @@ export enum Message {
   SmithSet = "The top voting cycle is",
   Submit = "Submit",
   Tool = "Tool",
+  ValidationIssues = "Validation errors/alerts:",
 }

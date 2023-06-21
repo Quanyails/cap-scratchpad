@@ -3,9 +3,8 @@ import { Message } from "../message";
 import { FORM_STYLES } from "../styles";
 import { Tool } from "../tool";
 import { SubmissionType } from "../lib/submissions/submissions";
-import { makeSlate } from "../lib/slater";
+import { getSubmissionHandler } from "../lib/slater";
 import { Select } from "./Select";
-import { makeBallots } from "../lib/ballots/ballotMaker";
 import { Toggle } from "./Toggle";
 import { BallotFormat, formatters } from "../lib/ballots/ballotFormatter";
 import {
@@ -17,8 +16,123 @@ import {
   formatApproval,
   formatRankedPairs,
 } from "../lib/voting/votingMethodFormatter";
-import { getPageTitle } from "../lib/posts";
-import { formatBallots } from "../lib/voting/votingResultformatter";
+import { getPageTitle, makePost } from "../lib/posts";
+import {
+  formatBallots,
+  formatValidationResults,
+} from "../lib/voting/votingResultformatter";
+import { fetchThread } from "../lib/threads";
+import {
+  validateUniqueBallotOptions,
+  validateUniqueUsers,
+  ValidationResult,
+} from "../lib/validators";
+import { makeBallot } from "../lib/ballots/ballots";
+
+const getResult = async (
+  url: string,
+  tool: Tool,
+  {
+    ballotFormat,
+    isRanked,
+    skipFirstPost,
+    skipLastPost,
+    submissionType,
+  }: {
+    ballotFormat: BallotFormat;
+    isRanked: boolean;
+    skipFirstPost: boolean;
+    skipLastPost: boolean;
+    submissionType: SubmissionType;
+  }
+) => {
+  const validationResults: ValidationResult[] = [];
+
+  const els = await fetchThread(url);
+  const posts = els.flatMap((el) => {
+    const postOrNull = makePost(el);
+    return postOrNull === null ? [] : [postOrNull];
+  });
+
+  switch (tool) {
+    case Tool.BallotMaker: {
+      const eligiblePosts = posts.slice(
+        skipFirstPost ? 1 : 0,
+        skipLastPost ? -1 : Infinity
+      );
+
+      validationResults.push(validateUniqueUsers(eligiblePosts, 1));
+
+      const ballots = eligiblePosts.flatMap((post) => {
+        const ballotOrNull = makeBallot(post);
+        return ballotOrNull === null ? [] : [ballotOrNull];
+      });
+
+      validationResults.push(
+        ...ballots.map((ballot) => validateUniqueBallotOptions(ballot, 1))
+      );
+
+      return formatters[ballotFormat](ballots);
+    }
+    case Tool.Slater: {
+      validationResults.push(validateUniqueUsers(posts, 1));
+
+      const submissionHandler = getSubmissionHandler(submissionType);
+      const submissions = posts.map((post) =>
+        submissionHandler.getSubmission(post)
+      );
+      // TODO: validate
+      const bbCodes = submissions.map((submission) =>
+        submissionHandler.formatBbCode(submission)
+      );
+      return bbCodes.join("\n");
+    }
+    case Tool.VotingCalculator: {
+      const eligiblePosts = posts.slice(
+        skipFirstPost ? 1 : 0,
+        skipLastPost ? -1 : Infinity
+      );
+
+      validationResults.push(validateUniqueUsers(eligiblePosts, 1));
+
+      const ballots = eligiblePosts.flatMap((post) => {
+        const ballotOrNull = makeBallot(post);
+        return ballotOrNull === null ? [] : [ballotOrNull];
+      });
+
+      validationResults.push(
+        ...ballots.map((ballot) => validateUniqueBallotOptions(ballot, 1))
+      );
+
+      const formattedValidationResults =
+        formatValidationResults(validationResults);
+
+      if (isRanked) {
+        const bordaCount = getBordaCount(ballots);
+        const rankedPairs = getRankedPairs(ballots);
+        return [
+          getPageTitle(),
+          ` # ${Message.RankedPairs.toUpperCase()} #`,
+          ...(formattedValidationResults ? [formattedValidationResults] : []),
+          formatBallots(ballots),
+          formatRankedPairs(bordaCount, rankedPairs),
+        ].join("\n\n");
+      } else {
+        const approval = getApproval(ballots);
+        return [
+          getPageTitle(),
+          ` # ${Message.Approval.toUpperCase()} #`,
+          ...(formattedValidationResults ? [formattedValidationResults] : []),
+          formatBallots(ballots),
+          formatApproval(approval),
+        ].join("\n\n");
+      }
+    }
+    default: {
+      throw new Error(`Unexpected tool type selected: ${tool}`);
+    }
+  }
+};
 
 export const BreeziForm = ({
   onSubmit,
@@ -36,50 +150,13 @@ export const BreeziForm = ({
   const [isRanked, setIsRanked] = useState(true);
 
   const handleSubmit = useCallback(async () => {
-    let result: string;
-
-    switch (tool) {
-      case Tool.BallotMaker: {
-        const ballots = await makeBallots(ballotFormat, location.href, {
-          skipFirst: skipFirstPost,
-          skipLast: skipLastPost,
-        });
-        result = formatters[ballotFormat](ballots);
-        break;
-      }
-      case Tool.Slater: {
-        result = await makeSlate(submissionType, location.href);
-        break;
-      }
-      case Tool.VotingCalculator: {
-        const ballots = await makeBallots(ballotFormat, location.href, {
-          skipFirst: skipFirstPost,
-          skipLast: skipLastPost,
-        });
-        if (isRanked) {
-          const bordaCount = getBordaCount(ballots);
-          const rankedPairs = getRankedPairs(ballots);
-          result = [
-            getPageTitle(),
-            ` # ${Message.RankedPairs.toUpperCase()} #`,
-            formatBallots(ballots),
-            formatRankedPairs(bordaCount, rankedPairs),
-          ].join("\n\n");
-        } else {
-          const approval = getApproval(ballots);
-          result = [
-            getPageTitle(),
-            ` # ${Message.Approval.toUpperCase()} #`,
-            formatBallots(ballots),
-            formatApproval(approval),
-          ].join("\n\n");
-        }
-        break;
-      }
-      default: {
-        throw new Error(`Unexpected tool type selected: ${tool}`);
-      }
-    }
+    const result = await getResult(location.href, tool, {
+      ballotFormat,
+      isRanked,
+      skipFirstPost,
+      skipLastPost,
+      submissionType,
+    });
     onSubmit(result);
   }, [
     ballotFormat,

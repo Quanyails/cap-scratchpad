@@ -3,6 +3,7 @@ import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
 
 interface NameSubmission {
   name: string;
+  postUrl: string;
 }
 
 const MAX_DESCRIPTION_LENGTH = 25;
@@ -76,10 +77,11 @@ const isPronunciationLegal = (pronunciation: string): boolean => {
   return pronunciation.startsWith(PRONUNCIATION_TEXT);
 };
 
-export const getSubmission = (
-  el: HTMLElement,
-  { textLines, username }: Post
-): NameSubmission | null => {
+export const getSubmission = ({
+  textLines,
+  url,
+  username,
+}: Post): NameSubmission | null => {
   const [finalSubmissionText, , name, , description, , pronunciation] =
     textLines;
   const isFinalSubmission =
@@ -123,11 +125,12 @@ export const getSubmission = (
   }
   return {
     name,
+    postUrl: url,
   };
 };
 
-const formatBbCode = ({ url }: Post, { name }: NameSubmission): string => {
-  return `[B]${name}[/B] [URL=${url}]>>>[/URL]`;
+const formatBbCode = ({ name, postUrl }: NameSubmission): string => {
+  return `[B]${name}[/B] [URL=${postUrl}]>>>[/URL]`;
 };
 
 export const nameSubmissionsHandler: SubmissionHandler<NameSubmission> = {
