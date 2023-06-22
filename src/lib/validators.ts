@@ -1,4 +1,4 @@
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy";
 import { Post } from "./posts";
 import { Ballot } from "./ballots/ballots";
 import { ValidationResult } from "./validation";

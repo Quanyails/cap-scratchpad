@@ -1,4 +1,4 @@
-import _ from "lodash";
+import range from "lodash/range";
 
 // TODO: Find a good, high-quality library for extracting combinations.
 // I can't seem to find a library that:
@@ -21,7 +21,7 @@ export const getCombinations = (n: number, k: number): number[][] => {
     return [];
   }
   if (k === 1) {
-    return _.range(n).map((i) => [i]);
+    return range(n).map((i) => [i]);
   }
   // Case where we took the first element
   const taken = getCombinations(n - 1, k - 1).map((arr) =>
