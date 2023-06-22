@@ -34,8 +34,7 @@ export const formatRankedPairs = (
     formatSmithSet(smithSet),
     ...(rpRanking.every((rp) => rp.length === 1)
       ? []
-      : [getBordaCountHeader()]),
-    formatScores(rpRanking, bordaScores),
+      : [getBordaCountHeader(), formatScores(rpRanking, bordaScores)]),
     getRundownHeader(),
     formatRanking(ranking, frontrunners),
     formatConfidence(ranking, matrix),
