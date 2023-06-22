@@ -78,7 +78,7 @@ const getResult = async (
         formatValidationResults(validationResults);
       const formattedBallots = formatters[ballotFormat](ballots);
 
-      return [formattedValidationResults, formattedBallots].join("\n\n");
+      return [formattedValidationResults, formattedBallots].join("\n\n").trim();
     }
     case Tool.Slater: {
       const submissionHandler = getSubmissionHandler(submissionType);
@@ -105,7 +105,7 @@ const getResult = async (
               [submissionHandler.formatBbCode(submission as any)];
         })
         .join("\n");
-      return [formattedValidationResults, formattedBbCode].join("\n\n");
+      return [formattedValidationResults, formattedBbCode].join("\n\n").trim();
     }
     case Tool.VotingCalculator: {
       const eligiblePosts = posts.slice(
@@ -137,7 +137,9 @@ const getResult = async (
           ...(formattedValidationResults ? [formattedValidationResults] : []),
           formatBallots(ballots),
           formatRankedPairs(bordaCount, rankedPairs),
-        ].join("\n\n");
+        ]
+          .join("\n\n")
+          .trim();
       } else {
         const approval = getApproval(ballots);
         return [
@@ -146,7 +148,9 @@ const getResult = async (
           ...(formattedValidationResults ? [formattedValidationResults] : []),
           formatBallots(ballots),
           formatApproval(approval),
-        ].join("\n\n");
+        ]
+          .join("\n\n")
+          .trim();
       }
     }
     default: {
