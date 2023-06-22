@@ -1,6 +1,7 @@
 import { Post } from "../posts";
 
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
+import { SubmissionHandler } from "../slater";
+import { FINAL_SUBMISSION_TEXT, Parsed } from "./submissions";
 
 const MAX_CATEGORY_CHARACTER_LENGTH = 13;
 const MAX_ENTRY_CHARACTER_LENGTH = 153;
@@ -35,14 +36,14 @@ const getSubmissionBase = ({
 }: {
   post: Post;
   requiredEntryCount: number;
-}): PokedexSubmission | null => {
+}): Parsed<PokedexSubmission> => {
   const [finalSubmissionText, nameAndCategoryLine, ...entryLines] =
     textLines.filter((_, i) => i % 2 === 0);
 
   const isFinalSubmission =
     finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
   if (!isFinalSubmission) {
-    return null;
+    return Parsed.issues([]);
   }
 
   // Doesn't have enough fields
@@ -50,10 +51,9 @@ const getSubmissionBase = ({
     nameAndCategoryLine === undefined ||
     entryLines.length < requiredEntryCount
   ) {
-    console.warn(`${username} has an illegal submission!`);
-    console.warn("The following submission doesn't have all required lines:");
-    console.warn(textLines.join("\n"));
-    return null;
+    return Parsed.issues([
+      `${username}'s submission is missing required lines.`,
+    ]);
   }
 
   const issues: string[] = [];
@@ -65,13 +65,15 @@ const getSubmissionBase = ({
     nameAndCategoryMatch.length === 0 ||
     nameAndCategoryMatch[0].length !== 4
   ) {
-    issues.push(`${nameAndCategoryLine} is not formatted correctly!`);
+    issues.push(
+      `${username}'s line "${nameAndCategoryLine}" is not formatted correctly!`
+    );
   }
 
   const [, name, category] = nameAndCategoryMatch[0];
   if (!isCategoryRightLength(category)) {
     issues.push(
-      `'${category}' is longer than the max length of ${MAX_CATEGORY_CHARACTER_LENGTH}!`
+      `${username}'s category "${category}" is longer than the max length of ${MAX_CATEGORY_CHARACTER_LENGTH}!`
     );
   }
 
@@ -79,18 +81,20 @@ const getSubmissionBase = ({
   for (const entryLine of entryLines) {
     const entryMatch = Array.from(entryLine.matchAll(/(.*): (.*)/g));
     if (entryMatch.length === 0 || entryMatch[0].length !== 3) {
-      issues.push(`${entryLine} is not formatted correctly!`);
+      issues.push(
+        `${username}'s line "${entryLine}" is not formatted correctly!`
+      );
     } else {
       const [, game, content] = entryMatch[0];
 
       if (!isEntryRightLength(content)) {
         issues.push(
-          `'${content}' is longer than the max length of ${MAX_ENTRY_CHARACTER_LENGTH}!`
+          `${username}'s entry "${content}" is longer than the max length of ${MAX_ENTRY_CHARACTER_LENGTH}!`
         );
       }
       if (!isEntryWordsRightLength(content)) {
         issues.push(
-          `'${content}' has more than ${MAX_ENTRY_WORD_COUNT} words!`
+          `${username}'s entry "${content}" has more than ${MAX_ENTRY_WORD_COUNT} words!`
         );
       }
       if (issues.length === 0) {
@@ -103,18 +107,16 @@ const getSubmissionBase = ({
   }
 
   if (issues.length > 0) {
-    console.warn(`${username} has an illegal submission!`);
-    issues.forEach((s) => console.warn(s));
-    return null;
+    return Parsed.issues(issues);
   }
 
-  return {
+  return Parsed.of({
     category,
     entries,
     name,
     postId: id,
     username,
-  };
+  });
 };
 
 const formatBbCode = ({
@@ -139,5 +141,5 @@ const formatBbCode = ({
 
 export const pokedexSubmissionsHandler: SubmissionHandler<PokedexSubmission> = {
   formatBbCode,
-  getSubmission: (post) => getSubmissionBase({ post, requiredEntryCount: 2 }),
+  parseSubmission: (post) => getSubmissionBase({ post, requiredEntryCount: 2 }),
 };

@@ -10,8 +10,8 @@ test("Minimal submission", () => {
     imageUrls: [SAMPLE_IMAGE],
     message: "Final Submission",
   });
-  const submission = artSubmissionsHandler.getSubmission(post);
-  expect(submission).not.toBeNull();
+  const result = artSubmissionsHandler.parseSubmission(post);
+  expect(result.submission).not.toBeNull();
 });
 
 test("Maximal submission", () => {
@@ -19,8 +19,8 @@ test("Maximal submission", () => {
     imageUrls: [SAMPLE_IMAGE, SAMPLE_IMAGE],
     message: "Final Submission",
   });
-  const submission = artSubmissionsHandler.getSubmission(post);
-  expect(submission).not.toBeNull();
+  const result = artSubmissionsHandler.parseSubmission(post);
+  expect(result.submission).not.toBeNull();
 });
 
 test("Two stage submission", () => {
@@ -28,6 +28,6 @@ test("Two stage submission", () => {
     imageUrls: [SAMPLE_IMAGE, SAMPLE_IMAGE],
     message: "Final Submission",
   });
-  const submission = twoStageArtSubmissionsHandler.getSubmission(post);
-  expect(submission).not.toBeNull();
+  const result = twoStageArtSubmissionsHandler.parseSubmission(post);
+  expect(result.submission).not.toBeNull();
 });

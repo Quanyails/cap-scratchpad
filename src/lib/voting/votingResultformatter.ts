@@ -2,7 +2,7 @@ import { Matrix } from "votes";
 import { Message } from "../../message";
 import { Ballot } from "../ballots/ballots";
 import { getConfidence } from "./confidence";
-import { ValidationResult } from "../validators";
+import { ValidationResult } from "../validation";
 
 const listFormatter = new Intl.ListFormat("en", {
   style: "long",

@@ -1,6 +1,7 @@
 import { Post } from "../posts";
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
+import { SubmissionHandler } from "../slater";
 import { Message } from "../../message";
+import { FINAL_SUBMISSION_TEXT, Parsed } from "./submissions";
 
 const SUPPORTING_MATERIAL_TEXT = "supporting material";
 
@@ -17,27 +18,26 @@ const getSubmissionBase = ({
 }: {
   post: Post;
   requiredImageCount: number;
-}): ArtSubmission | null => {
+}): Parsed<ArtSubmission> => {
   const isFinalSubmission =
     textLines[0].toLowerCase() === FINAL_SUBMISSION_TEXT;
   if (!isFinalSubmission) {
-    return null;
+    return Parsed.issues([]);
   }
   const hasSupportingMaterial = textLines.some(
     (line) => line.toLowerCase() === SUPPORTING_MATERIAL_TEXT
   );
   if (imageUrls.length < requiredImageCount) {
-    console.warn(
-      `${username} needs ${requiredImageCount} for a final submission but only provided ${imageUrls.length}.`
-    );
-    return null;
+    return Parsed.issues([
+      `${username} needs ${requiredImageCount} images for a final submission but only provided ${imageUrls.length}.`,
+    ]);
   }
-  return {
+  return Parsed.of({
     hasSupportingMaterial,
     imageUrls,
     postUrl: url,
     username,
-  };
+  });
 };
 
 const formatBbCodeBase = ({
@@ -74,7 +74,7 @@ export const artSubmissionsHandler: SubmissionHandler<ArtSubmission> = {
       artSubmission: submission,
       requiredImageCount: 1,
     }),
-  getSubmission: (post) =>
+  parseSubmission: (post) =>
     getSubmissionBase({
       post,
       requiredImageCount: 1,
@@ -87,7 +87,7 @@ export const twoStageArtSubmissionsHandler: SubmissionHandler<ArtSubmission> = {
       artSubmission: submission,
       requiredImageCount: 2,
     }),
-  getSubmission: (post) =>
+  parseSubmission: (post) =>
     getSubmissionBase({
       post,
       requiredImageCount: 2,

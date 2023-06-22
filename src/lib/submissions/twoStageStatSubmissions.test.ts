@@ -10,8 +10,8 @@ test("Minimal submission", () => {
 `,
   });
 
-  const submission = twoStageStatsSubmissionsHandler.getSubmission(post);
-  expect(submission).not.toBeNull();
+  const result = twoStageStatsSubmissionsHandler.parseSubmission(post);
+  expect(result.submission).not.toBeNull();
 });
 
 test("Maximal submission", () => {
@@ -27,6 +27,6 @@ test("Maximal submission", () => {
     Supporting text for stage 2.
 `,
   });
-  const submission = twoStageStatsSubmissionsHandler.getSubmission(post);
-  expect(submission).not.toBeNull();
+  const result = twoStageStatsSubmissionsHandler.parseSubmission(post);
+  expect(result.submission).not.toBeNull();
 });

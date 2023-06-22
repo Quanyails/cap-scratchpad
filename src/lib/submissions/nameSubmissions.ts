@@ -1,9 +1,11 @@
 import { Post } from "../posts";
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
+import { SubmissionHandler } from "../slater";
+import { FINAL_SUBMISSION_TEXT, Parsed } from "./submissions";
 
 interface NameSubmission {
   name: string;
   postUrl: string;
+  username: string;
 }
 
 const MAX_DESCRIPTION_LENGTH = 25;
@@ -77,18 +79,18 @@ const isPronunciationLegal = (pronunciation: string): boolean => {
   return pronunciation.startsWith(PRONUNCIATION_TEXT);
 };
 
-export const getSubmission = ({
+export const parseSubmission = ({
   textLines,
   url,
   username,
-}: Post): NameSubmission | null => {
+}: Post): Parsed<NameSubmission> => {
   const [finalSubmissionText, , name, , description, , pronunciation] =
     textLines;
   const isFinalSubmission =
     finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
 
   if (!isFinalSubmission) {
-    return null;
+    return Parsed.issues([]);
   }
 
   // Doesn't have enough fields
@@ -97,36 +99,36 @@ export const getSubmission = ({
       (s) => s === undefined
     )
   ) {
-    console.warn(`${username} has an illegal submission!`);
-    console.warn("The following submission doesn't have all required lines:");
-    console.warn(textLines.join("\n"));
-    return null;
+    return Parsed.issues([
+      `${username}'s submission is missing required lines.`,
+    ]);
   }
 
-  const issues: string[] = [];
-
-  if (!isNameLegal(name)) {
-    issues.push(`${name} does not meet the name format rules.`);
-  }
-  if (!isDescriptionLegal(description)) {
-    issues.push(
-      `"${description}"  is longer than the maximum description length of ${MAX_DESCRIPTION_LENGTH}.`
-    );
-  }
-  if (!isPronunciationLegal(pronunciation)) {
-    issues.push(
-      `"${pronunciation}" does not start with "${PRONUNCIATION_TEXT}".`
-    );
-  }
+  const issues: string[] = [
+    ...(isNameLegal(name)
+      ? []
+      : [
+          `${username}'s submission "${name}" does not meet the name format rules.`,
+        ]),
+    ...(isDescriptionLegal(description)
+      ? []
+      : [
+          `${username}'s description "${description}" longer than the maximum description length of ${MAX_DESCRIPTION_LENGTH}.`,
+        ]),
+    ...(isPronunciationLegal(pronunciation)
+      ? []
+      : [
+          `${username}'s pronunciation "${pronunciation}" does not start with "${PRONUNCIATION_TEXT}".`,
+        ]),
+  ];
   if (issues.length > 0) {
-    console.warn(`${username} has an illegal submission!`);
-    issues.forEach((s) => console.warn(s));
-    return null;
+    return Parsed.issues(issues);
   }
-  return {
+  return Parsed.of({
     name,
     postUrl: url,
-  };
+    username,
+  });
 };
 
 const formatBbCode = ({ name, postUrl }: NameSubmission): string => {
@@ -135,5 +137,5 @@ const formatBbCode = ({ name, postUrl }: NameSubmission): string => {
 
 export const nameSubmissionsHandler: SubmissionHandler<NameSubmission> = {
   formatBbCode,
-  getSubmission,
+  parseSubmission,
 };

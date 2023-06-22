@@ -13,9 +13,9 @@ test("Minimal submission", () => {
    `,
   });
 
-  const submission = nameSubmissionsHandler.getSubmission(post);
+  const result = nameSubmissionsHandler.parseSubmission(post);
 
-  expect(submission).not.toBeNull();
+  expect(result.submission).not.toBeNull();
 });
 
 test("Submission with illegal characters", () => {
@@ -30,9 +30,9 @@ test("Submission with illegal characters", () => {
     `,
   });
 
-  const submission = nameSubmissionsHandler.getSubmission(post);
+  const result = nameSubmissionsHandler.parseSubmission(post);
 
-  expect(submission).toBeNull();
+  expect(result.submission).toBeNull();
 });
 
 test("Submission with overly-long description", () => {
@@ -47,7 +47,7 @@ test("Submission with overly-long description", () => {
    `,
   });
 
-  const submission = nameSubmissionsHandler.getSubmission(post);
+  const result = nameSubmissionsHandler.parseSubmission(post);
 
-  expect(submission).toBeNull();
+  expect(result.submission).toBeNull();
 });

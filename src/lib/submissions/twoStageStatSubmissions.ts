@@ -1,6 +1,7 @@
 import { Post } from "../posts";
 import { formatStats, parseStats, Stats } from "../stats";
-import { FINAL_SUBMISSION_TEXT, SubmissionHandler } from "../slater";
+import { SubmissionHandler } from "../slater";
+import { FINAL_SUBMISSION_TEXT, Parsed } from "./submissions";
 
 interface TwoStageStatsSubmission {
   postUrl: string;
@@ -44,33 +45,36 @@ const getSubmission = ({
   textLines,
   username,
   url,
-}: Post): TwoStageStatsSubmission | null => {
+}: Post): Parsed<TwoStageStatsSubmission> => {
   const [finalSubmissionText] = textLines;
 
   const isFinalSubmission =
     finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
   if (!isFinalSubmission) {
-    return null;
+    return Parsed.issues([]);
   }
 
   const stage1 = findStats(textLines, STAGE_1_TEXT);
   const stage2 = findStats(textLines, STAGE_2_TEXT);
 
-  if (stage1 === undefined) {
-    console.warn(`${username} did not submit proper stats for stage 1!`);
-    return null;
-  }
-  if (stage2 === undefined) {
-    console.warn(`${username} did not submit proper stats for stage 2!`);
-    return null;
+  const issues = [
+    ...(stage1 === undefined
+      ? [`${username} did not submit stats properly for stage 1!`]
+      : []),
+    ...(stage2 === undefined
+      ? [`${username} did not submit stats properly for stage 2!`]
+      : []),
+  ];
+  if (issues.length > 0) {
+    return Parsed.issues(issues);
   }
 
-  return {
+  return Parsed.of({
     postUrl: url,
-    stage1,
-    stage2,
+    stage1: stage1 as Stats,
+    stage2: stage2 as Stats,
     username,
-  };
+  });
 };
 
 const formatBbCode = ({
@@ -87,5 +91,5 @@ const formatBbCode = ({
 export const twoStageStatsSubmissionsHandler: SubmissionHandler<TwoStageStatsSubmission> =
   {
     formatBbCode,
-    getSubmission,
+    parseSubmission: getSubmission,
   };

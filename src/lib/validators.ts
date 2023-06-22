@@ -1,11 +1,7 @@
 import { groupBy } from "lodash";
 import { Post } from "./posts";
 import { Ballot } from "./ballots/ballots";
-
-export interface ValidationResult {
-  issues: string[];
-  isValid: boolean;
-}
+import { ValidationResult } from "./validation";
 
 export const validateUniqueBallotOptions = (
   ballot: Ballot,
@@ -24,6 +20,27 @@ export const validateUniqueBallotOptions = (
     isValid: issues.length === 0,
   };
 };
+
+export const validateUniqueSubmissions = (
+  submissions: { username: string }[],
+  max: number
+): ValidationResult => {
+  const userPosts = groupBy(submissions, (s) => s.username);
+  const issues = Object.entries(userPosts).flatMap(
+    ([username, submissions]) => {
+      return submissions.length > max
+        ? [
+            `${username} has made ${submissions.length} valid submissions, which is more than the maximum of ${max}.`,
+          ]
+        : [];
+    }
+  );
+  return {
+    issues,
+    isValid: issues.length === 0,
+  };
+};
+
 export const validateUniqueUsers = (
   posts: Post[],
   max: number

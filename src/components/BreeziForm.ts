@@ -24,10 +24,11 @@ import {
 import { fetchThread } from "../lib/threads";
 import {
   validateUniqueBallotOptions,
+  validateUniqueSubmissions,
   validateUniqueUsers,
-  ValidationResult,
 } from "../lib/validators";
 import { makeBallot } from "../lib/ballots/ballots";
+import { ValidationResult } from "../lib/validation";
 
 const getResult = async (
   url: string,
@@ -72,20 +73,39 @@ const getResult = async (
         ...ballots.map((ballot) => validateUniqueBallotOptions(ballot, 1))
       );
 
-      return formatters[ballotFormat](ballots);
+      // Format results
+      const formattedValidationResults =
+        formatValidationResults(validationResults);
+      const formattedBallots = formatters[ballotFormat](ballots);
+
+      return [formattedValidationResults, formattedBallots].join("\n\n");
     }
     case Tool.Slater: {
-      validationResults.push(validateUniqueUsers(posts, 1));
-
       const submissionHandler = getSubmissionHandler(submissionType);
-      const submissions = posts.map((post) =>
-        submissionHandler.getSubmission(post)
+      const parsedSubmissions = posts.map((post) =>
+        submissionHandler.parseSubmission(post)
       );
-      // TODO: validate
-      const bbCodes = submissions.map((submission) =>
-        submissionHandler.formatBbCode(submission)
+      const validationResults = parsedSubmissions.flatMap((s) =>
+        s.validationResult.isValid ? [] : s.validationResult
       );
-      return bbCodes.join("\n");
+      const submissions = parsedSubmissions.flatMap((s) =>
+        s.validationResult.isValid && s.submission ? s.submission : []
+      );
+      validationResults.push(...validationResults);
+      validationResults.push(validateUniqueSubmissions(submissions, 1));
+
+      // Format results
+      const formattedValidationResults =
+        formatValidationResults(validationResults);
+      const formattedBbCode = parsedSubmissions
+        .flatMap(({ submission }) => {
+          return submission === null
+            ? []
+            : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              [submissionHandler.formatBbCode(submission as any)];
+        })
+        .join("\n");
+      return [formattedValidationResults, formattedBbCode].join("\n\n");
     }
     case Tool.VotingCalculator: {
       const eligiblePosts = posts.slice(
@@ -104,6 +124,7 @@ const getResult = async (
         ...ballots.map((ballot) => validateUniqueBallotOptions(ballot, 1))
       );
 
+      // Format results
       const formattedValidationResults =
         formatValidationResults(validationResults);
 
