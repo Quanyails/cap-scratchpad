@@ -28,7 +28,8 @@ Any issues found by the selected tool will be displayed in your browser's develo
 
 Run targets:
 
-- build: `npm run build`
+- all: `npm run all`
+- build: `npm run dev` or `npm run prod`
 - format: `npm run format`
 - lint: `npm run lint`
 - test: `npm run test`
