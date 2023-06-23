@@ -171,7 +171,7 @@ export const BreeziForm = ({
   const [skipFirstPost, setSkipFirstPost] = useState(true);
   const [skipLastPost, setSkipLastPost] = useState(false);
   const [submissionType, setSubmissionType] = useState(SubmissionType.Art);
-  const [tool, setTool] = useState(Tool.Slater);
+  const [tool, setTool] = useState(Tool.VotingCalculator);
   const [isRanked, setIsRanked] = useState(true);
 
   const handleSubmit = useCallback(async () => {
