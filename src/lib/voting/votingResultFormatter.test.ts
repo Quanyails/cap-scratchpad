@@ -20,8 +20,8 @@ test("minimal matrix", () => {
   });
   expect(result)
     .toBe(`[TABLE][TR][TD][/TD][TD][B]foo[/B][/TD][TD][B]bar[/B][/TD][/TR]
-[TR][TD][B]foo[/B][/TD][TD]0[/TD][TD]2[/TD][/TR]
-[TR][TD][B]bar[/B][/TD][TD]1[/TD][TD]0[/TD][/TR][/TABLE]`);
+[TR][TD][B]foo[/B][/TD][TD]0[/TD][TD][B]2[/B][/TD][/TR]
+[TR][TD][B]bar[/B][/TD][TD][I]1[/I][/TD][TD]0[/TD][/TR][/TABLE]`);
 });
 
 test("minimal ranking", () => {

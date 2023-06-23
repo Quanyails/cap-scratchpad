@@ -28,14 +28,27 @@ export const formatConfidence = (ranking: string[][], matrix: Matrix) => {
 };
 
 export const formatMatrix = ({ array, candidates }: Matrix) => {
-  const boldedCandidates = candidates.map((c) => `[B]${c}[/B]`);
+  const formattedCandidates = candidates.map((c) => `[B]${c}[/B]`);
+  const formattedCells = array.map((row, i) => {
+    return row.map((value, j) => {
+      const complement = array[j][i];
+      return value > complement
+        ? `[B]${value}[/B]`
+        : value < complement
+        ? `[I]${value}[/I]`
+        : `${value}`;
+    });
+  });
   const labeledTable = [
-    ["", ...boldedCandidates],
-    ...array.map((row, i) => [boldedCandidates[i], ...row.map((r) => `${r}`)]),
+    ["", ...formattedCandidates],
+    ...formattedCells.map((row, i) => [formattedCandidates[i], ...row]),
   ];
+
   return `[TABLE]${labeledTable
     .map((row) => {
-      const cells = row.map((value) => `[TD]${value}[/TD]`);
+      const cells = row.map((s) => {
+        return `[TD]${s}[/TD]`;
+      });
       return `[TR]${cells.join("")}[/TR]`;
     })
     .join("\n")}[/TABLE]`;
