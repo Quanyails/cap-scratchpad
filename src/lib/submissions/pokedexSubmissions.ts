@@ -4,13 +4,15 @@ import { SubmissionHandler } from "../slater";
 import { FINAL_SUBMISSION_TEXT, Parsed } from "./submissions";
 import _ from "lodash";
 
-const MAX_CATEGORY_CHARACTER_LENGTH = 13;
-const MAX_ENTRY_CHARACTER_LENGTH = 153;
-const MAX_ENTRY_WORD_COUNT = 30;
-
 interface Entry {
   content: string;
   game: string;
+}
+
+interface Limits {
+  categoryLength: number;
+  entryLength: number;
+  entryWordLength: number;
 }
 
 interface Stage {
@@ -25,23 +27,20 @@ interface PokedexSubmission {
   username: string;
 }
 
-const isCategoryRightLength = (category: string): boolean => {
-  return category.length <= MAX_CATEGORY_CHARACTER_LENGTH;
+const LIMITS: Record<string, Limits> = {
+  sv: {
+    categoryLength: 13,
+    entryLength: 153,
+    entryWordLength: 30,
+  },
 };
-
-const isEntryRightLength = (entry: string): boolean => {
-  return entry.length <= MAX_ENTRY_CHARACTER_LENGTH;
-};
-
-const isEntryWordsRightLength = (entry: string): boolean => {
-  return entry.split(" ").length <= MAX_ENTRY_WORD_COUNT;
-};
-
 const parseEntry = ({
   line,
+  limits,
   username,
 }: {
   line: string;
+  limits: Limits;
   username: string;
 }): Parsed<Entry> => {
   const entryMatch = Array.from(line.matchAll(/(.*): (.*)/g));
@@ -54,14 +53,14 @@ const parseEntry = ({
   const issues: string[] = [];
   const [, game, content] = entryMatch[0];
 
-  if (!isEntryRightLength(content)) {
+  if (content.length > limits.entryLength) {
     issues.push(
-      `${username}'s entry "${content}" is longer than the max length of ${MAX_ENTRY_CHARACTER_LENGTH}.`
+      `${username}'s entry "${content}" is longer than the max length of ${limits.entryLength}.`
     );
   }
-  if (!isEntryWordsRightLength(content)) {
+  if (content.split(" ").length > limits.entryWordLength) {
     issues.push(
-      `${username}'s entry "${content}" has more than ${MAX_ENTRY_WORD_COUNT} words.`
+      `${username}'s entry "${content}" has more than ${limits.entryWordLength} words.`
     );
   }
   return issues.length === 0
@@ -74,10 +73,12 @@ const parseEntry = ({
 
 const parseStage = ({
   entryCount,
+  limits,
   lines,
   username,
 }: {
   entryCount: number;
+  limits: Limits;
   lines: string[];
   username: string;
 }): Parsed<Stage> => {
@@ -98,13 +99,13 @@ const parseStage = ({
   }
 
   const [, name, category] = nameAndCategoryMatch[0];
-  if (!isCategoryRightLength(category)) {
+  if (category.length > limits.categoryLength) {
     issues.push(
-      `${username}'s category "${category}" is longer than the max length of ${MAX_CATEGORY_CHARACTER_LENGTH}.`
+      `${username}'s category "${category}" is longer than the max length of ${limits.categoryLength}.`
     );
   }
   const parsedEntries = entryLines.map((l) =>
-    parseEntry({ line: l, username })
+    parseEntry({ limits, line: l, username })
   );
   const entryIssues = parsedEntries.flatMap((e) =>
     e.validationResult.isValid ? [] : e.validationResult.issues
@@ -130,11 +131,12 @@ const parseStage = ({
 };
 
 const getSubmissionBase = ({
-  options: { entryCount, stageCount },
+  options: { entryCount, limits, stageCount },
   post: { id, textLines, username },
 }: {
   options: {
     entryCount: number;
+    limits: Limits;
     stageCount: number;
   };
   post: Post;
@@ -166,7 +168,7 @@ const getSubmissionBase = ({
     stageCount
   );
   const parsedStages = stageLines.map((ls) =>
-    parseStage({ entryCount, lines: ls, username })
+    parseStage({ entryCount, limits, lines: ls, username })
   );
   const issues = parsedStages.flatMap((s) =>
     s.validationResult.isValid ? [] : s.validationResult.issues
@@ -220,6 +222,7 @@ export const pokedexSubmissionsHandler: SubmissionHandler<PokedexSubmission> = {
     getSubmissionBase({
       options: {
         entryCount: 2,
+        limits: LIMITS.sv,
         stageCount: 1,
       },
       post,
@@ -233,6 +236,7 @@ export const twoStagePokedexSubmissionsHandler: SubmissionHandler<PokedexSubmiss
       getSubmissionBase({
         options: {
           entryCount: 2,
+          limits: LIMITS.sv,
           stageCount: 2,
         },
         post,

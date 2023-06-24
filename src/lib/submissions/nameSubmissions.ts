@@ -2,29 +2,26 @@ import { Post } from "../posts";
 import { SubmissionHandler } from "../slater";
 import { FINAL_SUBMISSION_TEXT, Parsed } from "./submissions";
 
+interface Limits {
+  descriptionWordLength: 25;
+  nameLength: 12;
+}
+
 interface NameSubmission {
   name: string;
   postUrl: string;
   username: string;
 }
 
-const MAX_DESCRIPTION_LENGTH = 25;
-const MAX_NAME_LENGTH = 12;
+const LIMITS: Record<string, Limits> = {
+  sv: {
+    descriptionWordLength: 25,
+    nameLength: 12,
+  },
+};
 const PRONUNCIATION_TEXT = "Pronounced: ";
 
-const isDescriptionLegal = (description: string): boolean => {
-  // Is description no longer than 25 words?
-  // TODO: Use a library to count words.
-  // Try: https://github.com/RadLikeWhoa/Countable
-
-  return description.split(" ").length <= MAX_DESCRIPTION_LENGTH;
-};
-
 const isNameLegal = (str: string): boolean => {
-  // Names cannot be longer than 12 letters.
-  if (str.length > MAX_NAME_LENGTH) {
-    return false;
-  }
   // Names can only contain certain characters.
   if (!str.match(/^[A-Za-z0-9 .\-':]+$/)) {
     return false;
@@ -79,11 +76,15 @@ const isPronunciationLegal = (pronunciation: string): boolean => {
   return pronunciation.startsWith(PRONUNCIATION_TEXT);
 };
 
-export const parseSubmission = ({
-  textLines,
-  url,
-  username,
-}: Post): Parsed<NameSubmission> => {
+export const parseSubmissionBase = ({
+  options: { limits },
+  post: { textLines, url, username },
+}: {
+  options: {
+    limits: Limits;
+  };
+  post: Post;
+}): Parsed<NameSubmission> => {
   const [finalSubmissionText, , name, , description, , pronunciation] =
     textLines;
   const isFinalSubmission =
@@ -105,16 +106,21 @@ export const parseSubmission = ({
   }
 
   const issues: string[] = [
+    ...(name.length > limits.nameLength
+      ? [
+          `${username}'s submission "${name}" is longer than the maximum name length of ${limits.nameLength}.`,
+        ]
+      : []),
     ...(isNameLegal(name)
       ? []
       : [
           `${username}'s submission "${name}" does not meet the name format rules.`,
         ]),
-    ...(isDescriptionLegal(description)
-      ? []
-      : [
-          `${username}'s description "${description}" longer than the maximum description length of ${MAX_DESCRIPTION_LENGTH}.`,
-        ]),
+    ...(description.split(" ").length > limits.descriptionWordLength
+      ? [
+          `${username}'s description "${description}" is longer than the maximum description length of ${limits.descriptionWordLength}.`,
+        ]
+      : []),
     ...(isPronunciationLegal(pronunciation)
       ? []
       : [
@@ -137,5 +143,11 @@ const formatBbCode = ({ name, postUrl }: NameSubmission): string => {
 
 export const nameSubmissionsHandler: SubmissionHandler<NameSubmission> = {
   formatBbCode,
-  parseSubmission,
+  parseSubmission: (post) =>
+    parseSubmissionBase({
+      options: {
+        limits: LIMITS.sv,
+      },
+      post,
+    }),
 };
