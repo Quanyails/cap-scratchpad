@@ -1,5 +1,8 @@
 import { buildTestPost } from "../posts";
-import { pokedexSubmissionsHandler } from "./pokedexSubmissions";
+import {
+  pokedexSubmissionsHandler,
+  twoStagePokedexSubmissionsHandler,
+} from "./pokedexSubmissions";
 
 test("Minimal submission", () => {
   const post = buildTestPost({
@@ -50,4 +53,40 @@ test("Overly-long submission", () => {
   const result = pokedexSubmissionsHandler.parseSubmission(post);
 
   expect(result.submission).toBeNull();
+});
+
+test("Too-short submission", () => {
+  const post = buildTestPost({
+    message: `Final Submission
+    
+    Koffing, the Poison Gas Pokemon
+    `,
+  });
+
+  const result = pokedexSubmissionsHandler.parseSubmission(post);
+
+  expect(result.submission).toBeNull();
+});
+
+test("Two-stage submission", () => {
+  const post = buildTestPost({
+    message: `Final Submission
+    
+    Koffing, the Poison Gas Pokemon
+
+    Sword: Because it stores several kinds of toxic gases in its body, it is prone to exploding without warning.
+    
+    Shield: It adores polluted air. Some claim that Koffing used to be more plentiful in the Galar region than they are now.
+
+    Weezing, the Poison Gas Pokemon
+    
+    Sword: This Pokémon consumes particles that contaminate the air. Instead of leaving droppings, it expels clean air.
+
+    Shield: Long ago, during a time when droves of factories fouled the air with pollution, Weezing changed into this form for some reason. 
+    `,
+  });
+
+  const result = twoStagePokedexSubmissionsHandler.parseSubmission(post);
+
+  expect(result.submission).not.toBeNull();
 });

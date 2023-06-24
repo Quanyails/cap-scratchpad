@@ -5,6 +5,7 @@ export enum SubmissionType {
   Name = "name",
   Pokedex = "pokedex",
   TwoStageArt = "twoStageArt",
+  TwoStagePokedex = "twoStagePokedex",
   TwoStageStats = "twoStageStats",
 }
 
