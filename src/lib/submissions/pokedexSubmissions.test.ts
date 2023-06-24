@@ -9,13 +9,30 @@ test("Minimal submission", () => {
     
     Sword: Because it stores several kinds of toxic gases in its body, it is prone to exploding without warning.
     
-    Shield: It adores polluted air. Some claim that Koffing used to be more plentiful in the Galar region than they are now. 
+    Shield: It adores polluted air. Some claim that Koffing used to be more plentiful in the Galar region than they are now.
     `,
   });
 
   const result = pokedexSubmissionsHandler.parseSubmission(post);
 
   expect(result.submission).not.toBeNull();
+});
+
+test("Maximal submission", () => {
+  const post = buildTestPost({
+    message: `Final Submission
+    
+    Koffing, the Poison Gas Pokémon
+    
+    Sword: Because it stores several kinds of toxic gases in its body, it is prone to exploding without warning.
+    
+    Shield: It adores polluted air. Some claim that Koffing used to be more plentiful in the Galar region than they are now.
+
+    A description.
+    `,
+  });
+  const result = pokedexSubmissionsHandler.parseSubmission(post);
+  expect(result).not.toBeNull();
 });
 
 test("Overly-long submission", () => {

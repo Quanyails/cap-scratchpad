@@ -37,8 +37,13 @@ const getSubmissionBase = ({
   post: Post;
   requiredEntryCount: number;
 }): Parsed<PokedexSubmission> => {
-  const [finalSubmissionText, nameAndCategoryLine, ...entryLines] =
-    textLines.filter((_, i) => i % 2 === 0);
+  const relevantLines = textLines.filter((_, i) => i % 2 === 0);
+
+  const [
+    finalSubmissionText,
+    nameAndCategoryLine,
+    ...entryLinesAndDescription
+  ] = relevantLines;
 
   const isFinalSubmission =
     finalSubmissionText.toLowerCase() === FINAL_SUBMISSION_TEXT;
@@ -49,12 +54,13 @@ const getSubmissionBase = ({
   // Doesn't have enough fields
   if (
     nameAndCategoryLine === undefined ||
-    entryLines.length < requiredEntryCount
+    entryLinesAndDescription.length < requiredEntryCount
   ) {
     return Parsed.issues([
       `${username}'s submission is missing required lines.`,
     ]);
   }
+  const entryLines = entryLinesAndDescription.slice(0, requiredEntryCount);
 
   const issues: string[] = [];
 
