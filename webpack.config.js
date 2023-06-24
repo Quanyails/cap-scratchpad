@@ -27,12 +27,6 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
       },
-      {
-        resolve: {
-          fullySpecified: false
-        },
-        test: /\.m?js/,
-      },
     ],
   },
   mode: 'development',
