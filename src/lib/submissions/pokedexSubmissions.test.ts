@@ -4,6 +4,23 @@ import {
   twoStagePokedexSubmissionsHandler,
 } from "./pokedexSubmissions";
 
+test("Illegal character submission", () => {
+  const post = buildTestPost({
+    message: `Final Submission
+    
+    Koffing, the Poison Gas Pokemon
+    
+    Sword: (Because it stores several kinds of toxic gases in its body, it is prone to exploding without warning.)
+    
+    Shield: (It adores polluted air. Some claim that Koffing used to be more plentiful in the Galar region than they are now.)
+    `,
+  });
+
+  const result = pokedexSubmissionsHandler.parseSubmission(post);
+
+  expect(result.submission).toBeNull();
+});
+
 test("Minimal submission", () => {
   const post = buildTestPost({
     message: `Final Submission
