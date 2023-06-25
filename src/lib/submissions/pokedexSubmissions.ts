@@ -38,8 +38,8 @@ const LIMITS: Record<string, Limits> = {
 const isEntryLegal = (str: string) => {
   // Strip diacritics. Used to handle "Pokémon" -> "Pokemon".
   const normalized = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  return /^[A-Za-z0-9 !.",\-':;]+$/.test(normalized);
-}
+  return /^[ !.",\-':;A-Za-z0-9]+$/.test(normalized);
+};
 const parseEntry = ({
   line,
   limits,
@@ -71,8 +71,8 @@ const parseEntry = ({
   }
   if (!isEntryLegal(content)) {
     issues.push(
-        `${username}'s entry "${content} contains an illegal character.`
-    )
+      `${username}'s entry "${content} contains an illegal character.`
+    );
   }
   return issues.length === 0
     ? Parsed.of({

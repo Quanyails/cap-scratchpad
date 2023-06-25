@@ -23,7 +23,7 @@ const PRONUNCIATION_TEXT = "Pronounced: ";
 
 const isNameLegal = (str: string): boolean => {
   // Names can only contain certain characters.
-  if (!str.match(/^[A-Za-z0-9 .\-':]+$/)) {
+  if (!/^[ .\-':A-Za-z0-9]+$/.test(str)) {
     return false;
   }
   // No more than two capital letters can be included in the name,
