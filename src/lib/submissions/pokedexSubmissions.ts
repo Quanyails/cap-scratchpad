@@ -222,7 +222,7 @@ const formatBbCode = ({
         `[QUOTE="${username}, post: ${postId}"]`,
         formatted,
         "[/QUOTE]",
-      ].join("\n\n");
+      ].join("\n");
     })
     .join("\n\n");
 };
