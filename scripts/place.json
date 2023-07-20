@@ -1,0 +1,15 @@
+{
+  "contact": "https://discord.gg/WUHvDHY",
+  "templates": [
+    {
+      "name": "CAP Project",
+      "sources": [
+        "https://raw.githubusercontent.com/Quanyails/cap-scratchpad/master/scripts/kitsunoh-0.png"
+      ],
+      "x": 342,
+      "y": 749
+    }
+  ],
+  "whitelist": [],
+  "blacklist": []
+}
