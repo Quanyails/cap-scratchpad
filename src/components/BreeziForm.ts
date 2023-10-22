@@ -141,7 +141,8 @@ const getResult = async (
           .join("\n\n")
           .trim();
       } else {
-        const approval = getApproval(ballots);
+        const flatBallots = ballots.map((b) => [b.flat()]);
+        const approval = getApproval(flatBallots);
         return [
           getPageTitle(),
           ` # ${Message.Approval.toUpperCase()} #`,
