@@ -91,7 +91,6 @@ const getResult = async (
       const submissions = parsedSubmissions.flatMap((s) =>
         s.validationResult.isValid && s.submission ? s.submission : []
       );
-      validationResults.push(...validationResults);
       validationResults.push(validateUniqueSubmissions(submissions, 1));
 
       // Format results
